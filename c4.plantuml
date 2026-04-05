@@ -1,0 +1,48 @@
+@startuml
+' ====================== C4 CONTEXT DIAGRAM (C1) - ZOLVE Platform ======================
+' Versão: 1.2 (Corrigido - 03/04/2026)
+' Correção do erro: Removido "as N1" do note + sintaxe simplificada
+' Agora 100% compatível com PlantUML beta 2026.3
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title **C4 Context Diagram (C1) - ZOLVE Platform**\nPlataforma de Soluções Domésticas e Serviços Profissionais
+
+' ====================== PESSOAS ======================
+Person(contratante, "Contratante", "Pessoa física ou jurídica que busca serviços domésticos")
+Person(prestador, "Prestador de Serviço", "Profissional autônomo que oferece serviços")
+Person(admin, "Administrador da Plataforma", "Equipe interna responsável pela gestão")
+
+' ====================== SISTEMA PRINCIPAL ======================
+System(zolve, "ZOLVE Platform", "Plataforma completa que conecta contratantes e prestadores\n(Front Mobile + Front Web + Painel Admin + Kong Gateway + Keycloak + BFF + API + Worker)")
+
+' ====================== SISTEMAS EXTERNOS ======================
+System_Ext(mercado_pago, "Mercado Pago", "Gateway de pagamento (fase futura)")
+System_Ext(mapas, "Google Maps / OpenStreetMap", "Geolocalização (fase futura)")
+
+' ====================== RELACIONAMENTOS (SETAS) ======================
+Rel(contratante, zolve, "Acessa e usa", "Mobile App ou Web App\n(HTTPS + JWT)")
+Rel(prestador, zolve, "Acessa e usa", "Mobile App ou Web App\n(HTTPS + JWT)")
+Rel(admin, zolve, "Acessa e usa", "Painel Administrativo Web\n(HTTPS + JWT)")
+
+Rel(zolve, mercado_pago, "Processa pagamentos (futuro)", "API externa")
+Rel(zolve, mapas, "Consulta localização (futuro)", "API externa")
+
+' ====================== FLUXO INTERNO (setas que você pediu) ======================
+note right of zolve
+  <b>Fluxo interno da arquitetura (C1):</b>
+
+  Usuário → <b>Frontends</b> (Web / Mobile / Painel)
+            ↓
+  <b>Kong API Gateway</b> ← recebe JWT
+            ↓
+  <b>Keycloak</b> (valida token + roles)
+            ↓
+  <b>Backend BFF</b> ← recebe headers (X-User-Roles, etc.)
+            ↓
+  <b>Backend API</b> + <b>Backend Worker</b>
+
+  (Todas as setas internas aparecem detalhadas no C2 Container Diagram)
+end note
+
+@enduml

@@ -1,0 +1,32 @@
+@startuml
+' ====================== C3 COMPONENT DIAGRAM - BACKEND BFF ======================
+' Versão: 1.0
+' Data: 03/04/2026
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title **C3 Component Diagram - Backend BFF**\n(Node.js / NestJS)
+
+Container_Boundary(bff_boundary, "Backend BFF") {
+
+    Component(bff_controller, "API Controllers", "NestJS Controllers", "Endpoints expostos para o Gateway (cadastro, perfil, solicitação, chat)")
+    Component(bff_service, "Business Services", "Services Layer", "Regras de negócio + orquestração (perfil, solicitação, histórico)")
+    Component(bff_auth, "Auth Middleware", "NestJS Guard", "Lê headers do Gateway (X-User-Id, X-User-Roles, X-User-Type)")
+    Component(bff_repo, "Repositories", "TypeORM / Prisma", "Acesso ao PostgreSQL")
+    Component(bff_client_api, "API Core Client", "HTTP Client", "Chama Backend API internamente")
+    Component(bff_client_worker, "Worker Client", "BullMQ Producer", "Envia tarefas assíncronas para Worker")
+    Component(bff_chat, "Chat Service", "WebSocket / Redis", "Gerencia salas de chat em tempo real")
+    Component(bff_notification, "Notification Orchestrator", "Service", "Coordena push, e-mail e notificações")
+
+}
+
+Rel(bff_controller, bff_auth, "usa")
+Rel(bff_controller, bff_service, "chama")
+Rel(bff_service, bff_repo, "persiste")
+Rel(bff_service, bff_client_api, "chama")
+Rel(bff_service, bff_client_worker, "envia tarefa")
+Rel(bff_service, bff_chat, "gerencia")
+Rel(bff_service, bff_notification, "orquestra")
+
+@enduml

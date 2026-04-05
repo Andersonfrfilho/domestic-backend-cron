@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px;">
+  <h2>Ação necessária no seu cadastro</h2>
+  <p>Olá, {{provider_name}}. Infelizmente sua solicitação de verificação foi rejeitada.</p>
+  {{#if reason}}
+  <p><strong>Motivo:</strong> {{reason}}</p>
+  {{/if}}
+  <p>Corrija as informações e submeta novamente para verificação.</p>
+  <a href="{{app_url}}" style="background:#DC2626;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;">Ver meu perfil</a>
+  <p style="margin-top:24px;color:#666;font-size:12px;">ZOLVE — Serviços domésticos de confiança</p>
+</body>
+</html>

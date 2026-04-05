@@ -1,0 +1,48 @@
+@startuml
+' ====================== C3 COMPONENT DIAGRAM - BACKEND API ======================
+' Versão: 1.1 (atualizado 04/04/2026)
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title **C3 Component Diagram - Backend API**\n(Core de Negócio)
+
+Container_Boundary(api_boundary, "Backend API") {
+
+    ' --- Domain Services ---
+    Component(api_user, "User Service", "Domain Service", "Cadastro, validação de e-mail/telefone,\ngerenciamento de endereços")
+    Component(api_provider, "Provider Service", "Domain Service", "Perfil do prestador, especialidades,\nlocalizações de trabalho, disponibilidade")
+    Component(api_category, "Category Service", "Domain Service", "Categorias e serviços do catálogo\n(admin-only para escrita)")
+    Component(api_service_request, "Service Request Service", "Domain Service", "Solicitação, aceite, recusa, confirmação,\ncancelamento e histórico")
+    Component(api_review, "Review Service", "Domain Service", "Avaliações pós-serviço,\ncálculo de rating intermediário")
+    Component(api_document, "Document Service", "Domain Service", "Upload, aprovação e rejeição\nde documentos de verificação")
+    Component(api_verification, "Verification Service", "Domain Service", "Fluxo de auditoria do prestador:\nPENDING → UNDER_REVIEW → APPROVED/REJECTED")
+    Component(api_notification, "Notification Service", "Domain Service", "Criação e persistência de notificações\nin-app para o usuário")
+
+    ' --- Infrastructure ---
+    Component(api_repo, "Repositories", "TypeORM / PostgreSQL", "Implementações de repositório por entidade.\nInterface-backed com string tokens.")
+    Component(api_cache, "Cache Client", "Redis / @adatechnology/cache", "Cache de leitura para queries frequentes\n(ex: listagem de categorias, perfil público)")
+    Component(api_event, "Event Publisher", "RabbitMQ Producer", "Publica domain events:\n- provider.approved\n- service_request.created\n- service_request.accepted\n- review.created")
+    Component(api_storage, "Storage Client", "MinIO / S3", "Upload e geração de URLs assinadas\npara documentos e fotos de perfil")
+
+}
+
+' --- Relações de domínio ---
+Rel(api_user, api_repo, "persiste")
+Rel(api_provider, api_repo, "persiste")
+Rel(api_category, api_repo, "persiste")
+Rel(api_service_request, api_repo, "persiste")
+Rel(api_review, api_repo, "persiste")
+Rel(api_document, api_repo, "persiste")
+Rel(api_verification, api_repo, "persiste")
+Rel(api_notification, api_repo, "persiste")
+
+' --- Relações de infraestrutura ---
+Rel(api_provider, api_cache, "invalida após mutação")
+Rel(api_category, api_cache, "invalida após mutação")
+Rel(api_service_request, api_event, "publica evento")
+Rel(api_verification, api_event, "publica evento de aprovação")
+Rel(api_review, api_event, "publica evento de review criada")
+Rel(api_document, api_storage, "upload/download")
+
+@enduml

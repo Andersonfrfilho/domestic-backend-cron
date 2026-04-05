@@ -1,0 +1,27 @@
+@startuml
+' ====================== C3 COMPONENT DIAGRAM - KEYCLOAK ======================
+' Versão: 1.0
+' Data: 03/04/2026
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title **C3 Component Diagram - Keycloak**\n(Identity & Access Management)
+
+Container_Boundary(keycloak_boundary, "Keycloak") {
+
+    Component(kc_realm, "Realm ZOLVE", "Realm", "Ambiente isolado da plataforma")
+    Component(kc_clients, "Clients", "Clients", "Web Client, Mobile Client, BFF Client")
+    Component(kc_users, "Users & Groups", "User Federation", "Usuários contratante / prestador / admin")
+    Component(kc_roles, "Realm Roles", "Roles", "contratante, prestador, prestador_verificado, admin")
+    Component(kc_token, "Token Service", "Endpoints", " /token, /introspect, JWKS")
+    Component(kc_events, "Event Listener", "Events", "Login, logout, role changes (para auditoria)")
+
+}
+
+Rel(kc_clients, kc_realm, "pertence ao")
+Rel(kc_users, kc_realm, "pertence ao")
+Rel(kc_roles, kc_realm, "pertence ao")
+Rel(kc_token, kc_clients, "emite JWT para")
+
+@enduml

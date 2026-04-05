@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px;">
+  <h2>Nova solicitação de serviço recebida</h2>
+  <p>Olá, {{provider_name}}! Você recebeu uma nova solicitação.</p>
+  <table style="width:100%;border-collapse:collapse;margin:16px 0;">
+    <tr><td style="padding:8px;color:#666;">Serviço:</td><td style="padding:8px;font-weight:bold;">{{service_name}}</td></tr>
+    <tr><td style="padding:8px;color:#666;">Contratante:</td><td style="padding:8px;">{{contractor_name}}</td></tr>
+    {{#if scheduled_at}}<tr><td style="padding:8px;color:#666;">Agendamento:</td><td style="padding:8px;">{{scheduled_at}}</td></tr>{{/if}}
+  </table>
+  <a href="{{request_url}}" style="background:#4F46E5;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;">Ver solicitação</a>
+  <p style="margin-top:24px;color:#666;font-size:12px;">ZOLVE — Serviços domésticos de confiança</p>
+</body>
+</html>

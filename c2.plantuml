@@ -1,0 +1,81 @@
+@startuml
+' ====================== C4 CONTAINER DIAGRAM (C2) - ZOLVE Platform ======================
+' Versão: 1.0
+' Data: 04/04/2026
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title **C4 Container Diagram (C2) - ZOLVE Platform**\nVisão de todos os containers e integrações
+
+' ====================== PESSOAS ======================
+Person(contratante, "Contratante", "Busca e contrata serviços")
+Person(prestador, "Prestador", "Oferece serviços domésticos")
+Person(admin, "Administrador", "Gestão da plataforma")
+
+' ====================== FRONTENDS ======================
+System_Boundary(frontends, "Frontends") {
+    Container(web_app, "Web App", "React / Next.js", "Interface para contratante e prestador")
+    Container(admin_panel, "Admin Panel", "React / Next.js", "Painel administrativo interno")
+}
+
+' ====================== GATEWAY ======================
+Container(kong, "Kong API Gateway", "Kong + plugins\nopenid-connect, rate-limit, cors", "Ponto único de entrada:\n- Valida JWT com Keycloak\n- Injeta headers: X-User-Id, X-User-Roles, X-User-Type\n- Rate limiting por rota")
+
+' ====================== IDENTITY ======================
+Container(keycloak, "Keycloak", "Keycloak 24+\nRealm ZOLVE", "Identity & Access Management:\n- Autenticação (login, registro)\n- Emissão de JWT\n- Roles: contratante, prestador, prestador_verificado, admin")
+
+' ====================== BACKENDS ======================
+Container(bff, "Backend BFF", "NestJS / Fastify\nTypeScript", "Orquestrador para o cliente:\n- Agrega dados de múltiplos domínios\n- Cache de leitura (Redis)\n- WebSocket para chat em tempo real\n- Consome MongoDB para histórico/chat")
+
+Container(api, "Backend API", "NestJS / Fastify\nTypeScript", "Core de negócio:\n- Users, Providers, Services\n- Service Requests, Reviews\n- Documents, Verification\n- Publica eventos no RabbitMQ")
+
+Container(worker, "Backend Worker", "NestJS\nTypeScript", "Processamento assíncrono:\n- Consome filas do RabbitMQ\n- Envia e-mails e push notifications\n- Processa aprovações de documentos")
+
+Container(cron, "Backend Cron", "NestJS\nTypeScript", "Tarefas agendadas:\n- Recalcula rating de prestadores\n- Cleanup de contas expiradas\n- Lembretes de solicitações pendentes\n- Relatórios periódicos")
+
+' ====================== STORAGES ======================
+ContainerDb(postgres, "PostgreSQL", "PostgreSQL 16", "Banco principal:\n- Todas as entidades de negócio\n- Transações ACID")
+
+ContainerDb(mongodb, "MongoDB", "MongoDB 7", "Banco do BFF:\n- Histórico de chat\n- Logs de atividade\n- Dados desnormalizados para leitura")
+
+ContainerDb(redis, "Redis", "Redis 7", "Cache + Pub/Sub:\n- Cache de sessão e queries\n- Pub/Sub para WebSocket (chat)\n- Rate limit counters")
+
+ContainerDb(rabbitmq, "RabbitMQ", "RabbitMQ 3.13", "Message Broker:\n- Fila de notificações\n- Fila de aprovações\n- Fila de e-mails")
+
+ContainerDb(minio, "MinIO", "MinIO (S3 compat.)", "Object Storage:\n- Documentos de verificação\n- Fotos de perfil")
+
+' ====================== EXTERNOS ======================
+System_Ext(firebase, "Firebase / OneSignal", "Push Notifications")
+System_Ext(smtp, "SMTP / SendGrid", "Envio de e-mails")
+System_Ext(maps, "Google Maps / OSM", "Geolocalização (futuro)")
+System_Ext(payment, "Mercado Pago", "Pagamentos (futuro)")
+
+' ====================== FLUXO PRINCIPAL ======================
+Rel(contratante, web_app, "Usa", "HTTPS")
+Rel(prestador, web_app, "Usa", "HTTPS")
+Rel(admin, admin_panel, "Usa", "HTTPS")
+
+Rel(web_app, kong, "Chama API", "HTTPS + JWT")
+Rel(admin_panel, kong, "Chama API", "HTTPS + JWT")
+
+Rel(kong, keycloak, "Valida token", "JWKS / Introspect")
+Rel(kong, bff, "Roteia (leitura/agregação)", "HTTP + X-Headers")
+Rel(kong, api, "Roteia (escrita/domínio)", "HTTP + X-Headers")
+
+Rel(bff, api, "Busca dados de negócio", "HTTP interno")
+Rel(bff, redis, "Cache de leitura", "Redis Protocol")
+Rel(bff, mongodb, "Lê histórico e chat", "MongoDB Wire Protocol")
+
+Rel(api, postgres, "Persiste", "TCP / TypeORM")
+Rel(api, rabbitmq, "Publica eventos", "AMQP")
+Rel(api, minio, "Upload/Download docs", "S3 API")
+
+Rel(worker, rabbitmq, "Consome filas", "AMQP")
+Rel(worker, postgres, "Atualiza registros", "TCP / TypeORM")
+Rel(worker, firebase, "Envia push", "HTTPS")
+Rel(worker, smtp, "Envia e-mails", "SMTP/HTTPS")
+
+Rel(cron, postgres, "Lê e atualiza", "TCP / TypeORM")
+Rel(cron, rabbitmq, "Publica jobs agendados", "AMQP")
+
+@enduml

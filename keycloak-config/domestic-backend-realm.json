@@ -1,0 +1,424 @@
+{
+  "realm": "domestic-backend",
+  "displayName": "Domestic Backend",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": true,
+  "registrationEmailAsUsername": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+  "permanentLockout": false,
+  "maxFailureWaitSeconds": 900,
+  "minimumQuickLoginWaitSeconds": 60,
+  "waitIncrementSeconds": 60,
+  "quickLoginCheckMilliSeconds": 1000,
+  "maxDeltaTimeSeconds": 43200,
+  "failureFactor": 30,
+  "passwordPolicy": "length(8) and forceExpiredPasswordChange(365) and notUsername",
+  "defaultSignatureAlgorithm": "RS256",
+  "clients": [
+    {
+      "clientId": "domestic-backend-api",
+      "name": "Domestic Backend API",
+      "description": "Main Backend API client for the Domestic application",
+      "baseUrl": "http://localhost:3000",
+      "enabled": true,
+      "directAccessGrantsEnabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "${BACKEND_API_CLIENT_SECRET:api-client-secret}",
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "redirectUris": [
+        "http://localhost:3000/*",
+        "http://localhost:8080/*"
+      ],
+      "webOrigins": [
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:8080"
+      ],
+      "attributes": {
+        "tls.client.certificate.bound.access.tokens": "false",
+        "oidc.ciba.grant.enabled": "false",
+        "client.secret.creation.time": "1763600000",
+        "display.on.consent.screen": "true",
+        "access.token.lifespan": "3600",
+        "refresh.token.lifespan": "86400"
+      },
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "defaultClientScopes": [
+        "web-origins",
+        "role_list",
+        "roles",
+        "profile",
+        "email",
+        "user-profile",
+        "address",
+        "phone",
+        "manage-services",
+        "manage-requests",
+        "manage-reviews"
+      ],
+      "optionalClientScopes": [
+        "offline_access",
+        "microprofile-jwt"
+      ],
+      "access": {
+        "view": true,
+        "configure": true,
+        "manage": true
+      }
+    },
+    {
+      "clientId": "domestic-worker",
+      "name": "Domestic Worker",
+      "description": "Worker service client for background jobs",
+      "enabled": true,
+      "directAccessGrantsEnabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "${WORKER_CLIENT_SECRET:worker-client-secret}",
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "attributes": {
+        "tls.client.certificate.bound.access.tokens": "false",
+        "oidc.ciba.grant.enabled": "false",
+        "display.on.consent.screen": "false",
+        "access.token.lifespan": "3600"
+      },
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "defaultClientScopes": [
+        "role_list",
+        "roles",
+        "profile",
+        "email",
+        "send-notifications",
+        "manage-services",
+        "manage-requests"
+      ],
+      "optionalClientScopes": [
+        "offline_access",
+        "microprofile-jwt"
+      ],
+      "access": {
+        "view": true,
+        "configure": true,
+        "manage": true
+      }
+    },
+    {
+      "clientId": "domestic-cron",
+      "name": "Domestic Cron",
+      "description": "Cron job service client",
+      "enabled": true,
+      "directAccessGrantsEnabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "${CRON_CLIENT_SECRET:cron-client-secret}",
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "attributes": {
+        "tls.client.certificate.bound.access.tokens": "false",
+        "oidc.ciba.grant.enabled": "false",
+        "display.on.consent.screen": "false",
+        "access.token.lifespan": "3600"
+      },
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "defaultClientScopes": [
+        "role_list",
+        "roles",
+        "profile",
+        "email",
+        "send-notifications",
+        "manage-services",
+        "manage-requests",
+        "manage-reviews"
+      ],
+      "optionalClientScopes": [
+        "offline_access",
+        "microprofile-jwt"
+      ],
+      "access": {
+        "view": true,
+        "configure": true,
+        "manage": true
+      }
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "admin",
+        "description": "Administrator role with full system access"
+      },
+      {
+        "name": "contractor",
+        "description": "Contractor role - can request services"
+      },
+      {
+        "name": "provider",
+        "description": "Service provider role - can offer services"
+      },
+      {
+        "name": "user-manager",
+        "description": "Role for managing users"
+      },
+      {
+        "name": "service-manager",
+        "description": "Role for managing services and categories"
+      },
+      {
+        "name": "document-verifier",
+        "description": "Role for verifying user documents"
+      },
+      {
+        "name": "support",
+        "description": "Support team role"
+      },
+      {
+        "name": "manage-services",
+        "description": "Permission to manage services"
+      },
+      {
+        "name": "manage-requests",
+        "description": "Permission to manage service requests"
+      },
+      {
+        "name": "manage-reviews",
+        "description": "Permission to manage reviews"
+      },
+      {
+        "name": "send-notifications",
+        "description": "Permission to send notifications"
+      }
+    ],
+    "client": {}
+  },
+  "groups": [
+    {
+      "name": "administrators",
+      "realmRoles": [
+        "admin",
+        "user-manager",
+        "service-manager",
+        "document-verifier",
+        "manage-services",
+        "manage-requests",
+        "manage-reviews",
+        "send-notifications"
+      ]
+    },
+    {
+      "name": "contractors",
+      "realmRoles": [
+        "contractor",
+        "manage-requests",
+        "manage-reviews"
+      ]
+    },
+    {
+      "name": "providers",
+      "realmRoles": [
+        "provider",
+        "manage-services",
+        "manage-requests",
+        "manage-reviews"
+      ]
+    },
+    {
+      "name": "support-team",
+      "realmRoles": [
+        "support",
+        "user-manager",
+        "document-verifier",
+        "send-notifications"
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "admin",
+      "enabled": true,
+      "email": "admin@domestic.local",
+      "emailVerified": true,
+      "firstName": "Administrator",
+      "lastName": "System",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "ChangeMeSecurePassword123!",
+          "temporary": true
+        }
+      ],
+      "realmRoles": [
+        "admin",
+        "user-manager",
+        "service-manager",
+        "document-verifier"
+      ],
+      "groups": [
+        "administrators"
+      ]
+    },
+    {
+      "username": "contractor-test",
+      "enabled": true,
+      "email": "contractor@domestic.local",
+      "emailVerified": true,
+      "firstName": "Test",
+      "lastName": "Contractor",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "ChangeMeSecurePassword123!",
+          "temporary": true
+        }
+      ],
+      "attributes": {
+        "is_contractor": [
+          "true"
+        ],
+        "is_provider": [
+          "false"
+        ]
+      },
+      "realmRoles": [
+        "contractor"
+      ],
+      "groups": [
+        "contractors"
+      ]
+    },
+    {
+      "username": "provider-test",
+      "enabled": true,
+      "email": "provider@domestic.local",
+      "emailVerified": true,
+      "firstName": "Test",
+      "lastName": "Provider",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "ChangeMeSecurePassword123!",
+          "temporary": true
+        }
+      ],
+      "attributes": {
+        "is_contractor": [
+          "false"
+        ],
+        "is_provider": [
+          "true"
+        ]
+      },
+      "realmRoles": [
+        "provider"
+      ],
+      "groups": [
+        "providers"
+      ]
+    },
+    {
+      "username": "support-test",
+      "enabled": true,
+      "email": "support@domestic.local",
+      "emailVerified": true,
+      "firstName": "Test",
+      "lastName": "Support",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "ChangeMeSecurePassword123!",
+          "temporary": true
+        }
+      ],
+      "realmRoles": [
+        "support",
+        "document-verifier"
+      ],
+      "groups": [
+        "support-team"
+      ]
+    }
+  ],
+  "clientScopes": [
+    {
+      "name": "user-profile",
+      "description": "OpenID Connect scope for user profile information",
+      "protocol": "openid-connect",
+      "protocolMappers": [
+        {
+          "name": "full name",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-full-name-mapper",
+          "consentRequired": false,
+          "config": {
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        },
+        {
+          "name": "given name",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "userinfo.token.claim": "true",
+            "user.attribute": "firstName",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "given_name",
+            "jsonType.label": "String"
+          }
+        }
+      ],
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true"
+      }
+    },
+    {
+      "name": "manage-services",
+      "description": "Scope for managing services",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    },
+    {
+      "name": "manage-requests",
+      "description": "Scope for managing service requests",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    },
+    {
+      "name": "manage-reviews",
+      "description": "Scope for managing reviews",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    },
+    {
+      "name": "send-notifications",
+      "description": "Scope for sending notifications",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    }
+  ]
+}

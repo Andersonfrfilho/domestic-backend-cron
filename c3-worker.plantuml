@@ -1,0 +1,42 @@
+@startuml
+' ====================== C3 COMPONENT DIAGRAM - BACKEND WORKER ======================
+' Versão: 1.1 (atualizado 04/04/2026)
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title **C3 Component Diagram - Backend Worker**\n(Processamento Assíncrono)
+
+Container_Boundary(worker_boundary, "Backend Worker") {
+
+    Component(worker_queue, "Queue Consumers", "RabbitMQ Consumer", "Roteador central: recebe mensagens\nde exchanges e despacha para handlers")
+
+    Component(worker_email, "Email Sender", "Job Handler\nQueue: notifications.email", "Envio de e-mails transacionais:\n- Validação de conta\n- Solicitação recebida\n- Aceite/recusa de serviço\n- Lembrete de agendamento")
+
+    Component(worker_push, "Push Notification", "Job Handler\nQueue: notifications.push", "Notificações push via Firebase/OneSignal:\n- Nova solicitação para prestador\n- Aceite/recusa para contratante\n- Nova mensagem no chat")
+
+    Component(worker_approval, "Provider Approval", "Job Handler\nQueue: provider.approval", "Processa aprovação/rejeição de prestador:\n- Atualiza status em PostgreSQL\n- Publica evento para e-mail e push")
+
+    Component(worker_rating, "Rating Updater", "Job Handler\nQueue: review.created", "Atualiza average_rating do prestador\napós nova review ser criada")
+
+    Component(worker_document, "Document Processor", "Job Handler\nQueue: document.uploaded", "Processamento futuro de validação automática\nde documentos (OCR / análise de imagem)")
+
+    Component(worker_repo, "Repositories", "TypeORM", "Acesso a PostgreSQL para\natualização de registros")
+
+    Component(worker_notification_client, "Notification Client", "Firebase / OneSignal SDK", "SDK de envio de push notifications")
+    Component(worker_email_client, "Email Client", "Nodemailer / SendGrid SDK", "Cliente SMTP para envio de e-mails")
+
+}
+
+Rel(worker_queue, worker_email, "roteia")
+Rel(worker_queue, worker_push, "roteia")
+Rel(worker_queue, worker_approval, "roteia")
+Rel(worker_queue, worker_rating, "roteia")
+Rel(worker_queue, worker_document, "roteia")
+
+Rel(worker_approval, worker_repo, "atualiza provider_profiles e provider_verifications")
+Rel(worker_rating, worker_repo, "atualiza average_rating em provider_profiles")
+Rel(worker_email, worker_email_client, "envia via")
+Rel(worker_push, worker_notification_client, "envia via")
+
+@enduml

@@ -1,0 +1,39 @@
+@startuml
+' ====================== C3 COMPONENT DIAGRAM - BACKEND CRON ======================
+' Versão: 1.0
+' Data: 04/04/2026
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title **C3 Component Diagram - Backend Cron**\n(Tarefas Agendadas)
+
+Container_Boundary(cron_boundary, "Backend Cron") {
+
+    Component(cron_scheduler, "Scheduler", "NestJS Schedule\n@Cron decorator", "Gerencia os agendamentos com cron expressions")
+
+    Component(cron_rating, "Rating Recalculator", "Cron Job\nDiário 02:00", "Recalcula average_rating de todos os prestadores\ncom base nas reviews do período")
+
+    Component(cron_cleanup, "Account Cleanup", "Cron Job\nSemanal Domingo 03:00", "Remove contas não verificadas após 7 dias\nde criação sem validação de e-mail")
+
+    Component(cron_reminder, "Request Reminder", "Cron Job\nDiário 09:00", "Envia lembretes para service_requests\nem status PENDING por mais de 24h")
+
+    Component(cron_report, "Weekly Report", "Cron Job\nSegunda 07:00", "Gera relatório semanal de métricas\nda plataforma (futuro: enviar para admin)")
+
+    Component(cron_repo, "Repositories", "TypeORM", "Acesso leitura/escrita ao PostgreSQL")
+    Component(cron_publisher, "Event Publisher", "RabbitMQ Producer", "Publica eventos para Worker processar\n(ex: envio de e-mail de lembrete)")
+
+}
+
+Rel(cron_scheduler, cron_rating, "dispara")
+Rel(cron_scheduler, cron_cleanup, "dispara")
+Rel(cron_scheduler, cron_reminder, "dispara")
+Rel(cron_scheduler, cron_report, "dispara")
+
+Rel(cron_rating, cron_repo, "lê reviews / atualiza provider_profiles")
+Rel(cron_cleanup, cron_repo, "lê e deleta users")
+Rel(cron_reminder, cron_repo, "lê service_requests")
+Rel(cron_reminder, cron_publisher, "publica evento de lembrete")
+Rel(cron_report, cron_repo, "lê métricas agregadas")
+
+@enduml

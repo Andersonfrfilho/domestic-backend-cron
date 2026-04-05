@@ -1,0 +1,3 @@
+export enum ConfigErrorCode {
+  INVALID_CONFIGURATION = 'INVALID_CONFIGURATION',
+}

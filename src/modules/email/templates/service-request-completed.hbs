@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px;">
+  <h2>Serviço concluído — avalie! ⭐</h2>
+  <p>Olá, {{recipient_name}}! O serviço foi marcado como concluído.</p>
+  <table style="width:100%;border-collapse:collapse;margin:16px 0;">
+    <tr><td style="padding:8px;color:#666;">Serviço:</td><td style="padding:8px;font-weight:bold;">{{service_name}}</td></tr>
+  </table>
+  {{#if review_url}}
+  <p>Deixe sua avaliação e ajude outros usuários a conhecer a qualidade do serviço.</p>
+  <a href="{{review_url}}" style="background:#F59E0B;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;">Avaliar serviço</a>
+  {{/if}}
+  <p style="margin-top:24px;color:#666;font-size:12px;">ZOLVE — Serviços domésticos de confiança</p>
+</body>
+</html>
