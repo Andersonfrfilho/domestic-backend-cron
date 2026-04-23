@@ -11,15 +11,18 @@ COPY . .
 
 RUN npm run build
 
-# Compila migrations separadamente
-RUN npx tsc src/modules/shared/providers/database/migrations/*.ts \
-  --outDir dist/modules/shared/providers/database/migrations \
-  --module commonjs \
-  --target es2020 \
-  --esModuleInterop \
-  --skipLibCheck \
-  --strict false && \
-  npm prune --omit=dev
+# Compila migrations separadamente (se existirem)
+RUN if ls src/modules/shared/providers/database/migrations/*.ts 2>/dev/null; then \
+    npx tsc src/modules/shared/providers/database/migrations/*.ts \
+      --outDir dist/modules/shared/providers/database/migrations \
+      --module commonjs \
+      --target es2020 \
+      --esModuleInterop \
+      --skipLibCheck \
+      --strict false; \
+  fi && \
+  npm prune --omit=dev && \
+  npm install --no-save tsconfig-paths
 
 # ===== STAGE 2: Runtime (Production) =====
 FROM node:25-alpine
