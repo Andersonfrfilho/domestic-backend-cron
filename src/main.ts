@@ -1,17 +1,10 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
-import { register as tsConfigPathsRegister } from 'tsconfig-paths';
 
-import * as tsConfig from '../tsconfig.json';
 
 import { AppModule } from './app.module';
 
-const compilerOptions = tsConfig.compilerOptions;
-tsConfigPathsRegister({
-  baseUrl: compilerOptions.baseUrl,
-  paths: compilerOptions.paths,
-});
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(

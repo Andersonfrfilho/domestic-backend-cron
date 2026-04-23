@@ -1,12 +1,10 @@
 import { LoggerModule } from '@adatechnology/logger';
 import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
-import { register as tsConfigPathsRegister } from 'tsconfig-paths';
 
 import { ConfigModule } from '@config/config.module';
 import { HealthModule } from '@modules/health/health.module';
 
-import * as tsConfig from '../tsconfig.json';
 
 import { SharedModule } from './modules/shared/shared.module';
 import { AccountCleanupModule } from './modules/account-cleanup/account-cleanup.module';
@@ -15,11 +13,6 @@ import { RequestReminderModule } from './modules/request-reminder/request-remind
 import { WeeklyReportModule } from './modules/weekly-report/weekly-report.module';
 import { JobsModule } from './modules/jobs/jobs.module';
 
-const compilerOptions = tsConfig.compilerOptions;
-tsConfigPathsRegister({
-  baseUrl: compilerOptions.baseUrl,
-  paths: compilerOptions.paths,
-});
 
 @Module({
   imports: [
