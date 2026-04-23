@@ -74,6 +74,7 @@
     "redoc": "^2.5.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "tsconfig-paths": "^4.2.0",
     "typeorm": "^0.3.27",
     "winston": "^3.17.0",
     "winston-daily-rotate-file": "^5.0.0"
@@ -107,7 +108,6 @@
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "ts-prune": "^0.10.3",
-    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.20.0"
   }
