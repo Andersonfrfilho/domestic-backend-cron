@@ -33,6 +33,7 @@ WORKDIR /app
 COPY --from=builder /app/node_modules ./node_modules
 
 # Copia apenas arquivos compilados e necessários
+COPY --from=builder /app/tsconfig.json ./
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/package*.json ./
