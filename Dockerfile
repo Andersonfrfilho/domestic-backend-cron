@@ -1,16 +1,10 @@
 # ===== STAGE 1: Build =====
 FROM node:25-alpine AS builder
-
 WORKDIR /app
-
 COPY package*.json ./
-
 RUN npm ci
-
 COPY . .
-
 RUN npm run build
-
 # Compila migrations separadamente (se existirem)
 RUN if ls src/modules/shared/providers/database/migrations/*.ts 2>/dev/null; then \
     npx tsc src/modules/shared/providers/database/migrations/*.ts \
@@ -21,25 +15,20 @@ RUN if ls src/modules/shared/providers/database/migrations/*.ts 2>/dev/null; the
       --skipLibCheck \
       --strict false; \
   fi && \
-  npm prune --omit=dev && \
+  npm prune --omit=dev
 
 # ===== STAGE 2: Runtime (Production) =====
 FROM node:25-alpine
-
 WORKDIR /app
-
 # Copia apenas dependências de produção
 COPY --from=builder /app/node_modules ./node_modules
-
 # Copia apenas arquivos compilados e necessários
 COPY --from=builder /app/tsconfig.json ./
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/package*.json ./
-
 # Cria pasta de logs
 RUN mkdir -p logs
-
 # PRODUÇÃO: Inicia diretamente (sem rodar migrations)
 # Migrations devem ser rodadas manualmente ou via pipeline CI/CD
 CMD ["npm", "run", "start:prod"]
