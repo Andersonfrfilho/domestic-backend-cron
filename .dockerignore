@@ -16,4 +16,4 @@ logs
 .env.example
 jest.config.*
 .github
-makefile
+makefile*.tsbuildinfo
