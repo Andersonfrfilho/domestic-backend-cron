@@ -59,7 +59,7 @@ const PostgresDataSource = new DataSource({
     ProviderDocument,
   ],
   migrations,
-  migrationsRun: true,
+  migrationsRun: false,
 });
 
 export default PostgresDataSource;
