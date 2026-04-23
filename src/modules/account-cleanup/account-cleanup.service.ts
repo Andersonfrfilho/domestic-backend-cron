@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 
 import { User } from '@modules/shared/providers/database/entities/user.entity';
@@ -21,6 +21,7 @@ export class AccountCleanupService {
   constructor(
     @InjectRepository(User, CONNECTIONS_NAMES.POSTGRES)
     private readonly userRepo: Repository<User>,
+    @InjectDataSource(CONNECTIONS_NAMES.POSTGRES)
     private readonly dataSource: DataSource,
   ) {}
 
