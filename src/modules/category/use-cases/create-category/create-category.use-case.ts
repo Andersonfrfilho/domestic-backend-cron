@@ -30,7 +30,7 @@ export class CreateCategoryUseCase implements CreateCategoryUseCaseInterface {
     }
 
     const category = await this.categoryRepository.create(params);
-    await this.cacheProvider.del(CACHE_KEY).catch(() => null);
+    await this.cacheProvider.del({ key: CACHE_KEY }).catch(() => null);
     return category;
   }
 }

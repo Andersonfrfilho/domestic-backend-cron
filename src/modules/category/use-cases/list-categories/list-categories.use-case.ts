@@ -23,13 +23,13 @@ export class ListCategoriesUseCase implements ListCategoriesUseCaseInterface {
   ) {}
 
   async execute(): Promise<ListCategoriesUseCaseResponse> {
-    const cached = await this.cacheProvider.get<ListCategoriesUseCaseResponse>(CACHE_KEY);
+    const cached = await this.cacheProvider.get<ListCategoriesUseCaseResponse>({ key: CACHE_KEY });
     if (cached) {
       return cached;
     }
 
     const categories = await this.categoryRepository.listActive();
-    await this.cacheProvider.set(CACHE_KEY, categories, CACHE_TTL);
+    await this.cacheProvider.set({ key: CACHE_KEY, value: categories, ttlInSeconds: CACHE_TTL });
     return categories;
   }
 }

@@ -55,7 +55,7 @@ export class UserController {
   @ApiInternalServerErrorResponse()
   async create(@Body() params: CreateUserRequestDto): Promise<CreateUserResponseDto> {
     const user = await this.userService.createUser(params);
-    await this.cacheProvider.del('users:list').catch(() => null);
+    await this.cacheProvider.del({ key: 'users:list' }).catch(() => null);
     return user;
   }
 
