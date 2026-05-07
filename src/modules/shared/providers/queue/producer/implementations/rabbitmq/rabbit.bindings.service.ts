@@ -3,6 +3,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 
 import { AppErrorFactory } from '@modules/error/app.error.factory';
 import { MethodNotImplementedErrorCode } from '@modules/error/error-codes';
+import { CRON_RABBITMQ_QUEUES } from '@config/rabbitmq.queues';
 
 @Injectable()
 export class RabbitBindingsService implements OnModuleInit {
@@ -40,16 +41,13 @@ export class RabbitBindingsService implements OnModuleInit {
   private async createBindings() {
     const channel = this.amqpConnection.channel;
 
-    // Zolve events exchange bindings (used by consumers via @RabbitSubscribe)
-    // Consumers declare their own queues with queueOptions, so we just ensure bindings exist
-    await channel.bindQueue('worker.rating', 'zolve.events', 'review.created');
-    await channel.bindQueue('worker.service-requests', 'zolve.events', 'service_request.*');
-    await channel.bindQueue('worker.notifications', 'zolve.events', 'notifications.email');
-    await channel.bindQueue('worker.notifications', 'zolve.events', 'notifications.push');
-    await channel.bindQueue('worker.provider.approval', 'zolve.events', 'provider.approved');
-    await channel.bindQueue('worker.provider.approval', 'zolve.events', 'provider.rejected');
+    const queues = CRON_RABBITMQ_QUEUES;
 
-    // Dead letter queue binding
-    await channel.bindQueue('worker.dlq', 'zolve.dlx', '');
+    // Bind each queue to its exchange with its routing keys
+    for (const queue of Object.values(queues)) {
+      for (const routingKey of queue.routingKeys) {
+        await channel.bindQueue(queue.name, queue.exchange, routingKey);
+      }
+    }
   }
 }
