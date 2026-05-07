@@ -4,11 +4,10 @@ import { Module } from '@nestjs/common';
 import { QUEUE_PRODUCER_PROVIDER } from '../../producer.token';
 
 import { RabbitBindingsService } from './rabbit.bindings.service';
-import { rabbitConnection } from './rabbit.connection';
 import { RabbitMQMessageProducer } from './rabbit.provider';
 
 @Module({
-  imports: [rabbitConnection, LoggerModule],
+  imports: [LoggerModule],
   providers: [
     {
       provide: QUEUE_PRODUCER_PROVIDER,
