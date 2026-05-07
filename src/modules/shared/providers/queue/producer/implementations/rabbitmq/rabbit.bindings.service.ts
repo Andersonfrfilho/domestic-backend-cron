@@ -40,13 +40,26 @@ export class RabbitBindingsService implements OnModuleInit {
 
   private async createBindings() {
     const channel = this.amqpConnection.channel;
-
     const queues = CRON_RABBITMQ_QUEUES;
 
-    // Bind each queue to its exchange with its routing keys
+    // First ensure all queues exist (already declared via @RabbitSubscribe, but just in case)
+    for (const queue of Object.values(queues)) {
+      try {
+        await channel.assertQueue(queue.name, { durable: true });
+      } catch (error) {
+        // Queue might already exist with different options - that's handled by @RabbitSubscribe
+      }
+    }
+
+    // Then bind each queue to its exchange with its routing keys
     for (const queue of Object.values(queues)) {
       for (const routingKey of queue.routingKeys) {
-        await channel.bindQueue(queue.name, queue.exchange, routingKey);
+        try {
+          await channel.bindQueue(queue.name, queue.exchange, routingKey);
+        } catch (error) {
+          // Binding might fail if queue was already bound - log but don't fail
+          console.warn(`Warning binding ${queue.name} to ${queue.exchange}: ${error instanceof Error ? error.message : error}`);
+        }
       }
     }
   }
