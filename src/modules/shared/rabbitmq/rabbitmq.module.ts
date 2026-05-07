@@ -11,6 +11,9 @@ const logger = new Logger('CronRabbitMQModule');
           process.env.RABBITMQ_URL ||
           `amqp://${process.env.QUEUE_RABBITMQ_USER || 'guest'}:${process.env.QUEUE_RABBITMQ_PASS || 'guest'}@${process.env.QUEUE_RABBITMQ_HOST || 'localhost'}:${process.env.QUEUE_RABBITMQ_PORT || '5672'}/`;
 
+        console.log('[CronRabbitMQ] URI:', uri.replace(/:\w+@/, ':****@'));
+        console.log('[CronRabbitMQ] HOST:', process.env.QUEUE_RABBITMQ_HOST);
+
         if (uri.includes('guest') || uri.includes('localhost')) {
           logger.warn(
             'RabbitMQ configured with default credentials or localhost — verify QUEUE_RABBITMQ_* env vars in production',
