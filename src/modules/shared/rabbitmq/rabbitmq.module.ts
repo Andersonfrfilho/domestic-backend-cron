@@ -9,20 +9,28 @@ const logger = new Logger('CronRabbitMQModule');
     RabbitMQModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
-        const user = configService.get('QUEUE_RABBITMQ_USER') || 'guest';
-        const pass = configService.get('QUEUE_RABBITMQ_PASS') || 'guest';
-        const host = configService.get('QUEUE_RABBITMQ_HOST') || 'localhost';
-        const port = configService.get('QUEUE_RABBITMQ_PORT') || '5672';
+        const LIFECYCLE_LOG_PREFIX = '🐰 RabbitMQ';
+
+        console.log(`${LIFECYCLE_LOG_PREFIX} [INIT] Factory invoked - starting environment variable loading phase`);
+
+        const user = configService.get('QUEUE_RABBITMQ_USER');
+        const pass = configService.get('QUEUE_RABBITMQ_PASS');
+        const host = configService.get('QUEUE_RABBITMQ_HOST');
+        const port = configService.get('QUEUE_RABBITMQ_PORT');
         const rabbitmqUrl = configService.get('RABBITMQ_URL');
 
+        console.log(`${LIFECYCLE_LOG_PREFIX} [ENV] User loaded: ${user ? '✓ set' : '✗ not set'}`);
+        console.log(`${LIFECYCLE_LOG_PREFIX} [ENV] Pass loaded: ${pass ? '✓ set' : '✗ not set'}`);
+        console.log(`${LIFECYCLE_LOG_PREFIX} [ENV] Host loaded: ${host ? `✓ ${host}` : '✗ not set'}`);
+        console.log(`${LIFECYCLE_LOG_PREFIX} [ENV] Port loaded: ${port ? `✓ ${port}` : '✗ not set'}`);
+        console.log(`${LIFECYCLE_LOG_PREFIX} [ENV] RabbitMQ URL loaded: ${rabbitmqUrl ? '✓ set' : '✗ not set'}`);
+
         const uri = rabbitmqUrl || `amqp://${user}:${pass}@${host}:${port}/`;
+        console.log(`${LIFECYCLE_LOG_PREFIX} [URI] Constructed: ${rabbitmqUrl ? '[from RABBITMQ_URL]' : `amqp://***:***@${host}:${port}/`}`);
 
-        console.log('🔍 RabbitMQ URI:', uri);
-        console.log('🔍 USER:', user, 'HOST:', host, 'PORT:', port);
-
-        if (uri.includes('guest') || uri.includes('localhost')) {
-          logger.warn(
-            'RabbitMQ configured with default credentials or localhost — verify QUEUE_RABBITMQ_* env vars in production',
+        if (!user || !pass || !host || !port) {
+          logger.error(
+            `RabbitMQ missing required env vars - User: ${user ? '✓' : '✗'}, Pass: ${pass ? '✓' : '✗'}, Host: ${host ? '✓' : '✗'}, Port: ${port ? '✓' : '✗'}`,
           );
         }
 
