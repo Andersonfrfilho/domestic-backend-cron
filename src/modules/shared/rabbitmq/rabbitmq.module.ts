@@ -7,7 +7,7 @@ const logger = new Logger('CronRabbitMQModule');
   imports: [
     RabbitMQModule.forRootAsync({
       useFactory: async () => {
-        await new Promise(resolve => setImmediate(resolve));
+        await new Promise(resolve => setTimeout(resolve, 200));
         const uri =
           process.env.RABBITMQ_URL ||
           `amqp://${process.env.QUEUE_RABBITMQ_USER || 'guest'}:${process.env.QUEUE_RABBITMQ_PASS || 'guest'}@${process.env.QUEUE_RABBITMQ_HOST || 'localhost'}:${process.env.QUEUE_RABBITMQ_PORT || '5672'}/`;
