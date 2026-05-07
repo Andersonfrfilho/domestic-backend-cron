@@ -8,9 +8,14 @@ const logger = new Logger('CronRabbitMQModule');
     RabbitMQModule.forRootAsync({
       useFactory: async () => {
         await new Promise(resolve => setTimeout(resolve, 500));
-        const uri =
-          process.env.RABBITMQ_URL ||
-          `amqp://${process.env.QUEUE_RABBITMQ_USER || 'guest'}:${process.env.QUEUE_RABBITMQ_PASS || 'guest'}@${process.env.QUEUE_RABBITMQ_HOST || 'localhost'}:${process.env.QUEUE_RABBITMQ_PORT || '5672'}/`;
+
+        const rabbitmqUrl = process.env.RABBITMQ_URL;
+        const user = process.env.QUEUE_RABBITMQ_USER || 'guest';
+        const pass = process.env.QUEUE_RABBITMQ_PASS || 'guest';
+        const host = process.env.QUEUE_RABBITMQ_HOST || 'localhost';
+        const port = process.env.QUEUE_RABBITMQ_PORT || '5672';
+
+        const uri = rabbitmqUrl || `amqp://${user}:${pass}@${host}:${port}/`;
 
         console.log('🔍 CronRabbitMQModule URI:', uri);
         console.log('🔍 QUEUE_RABBITMQ_USER:', process.env.QUEUE_RABBITMQ_USER);
