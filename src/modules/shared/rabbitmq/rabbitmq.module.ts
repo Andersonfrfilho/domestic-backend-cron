@@ -27,7 +27,7 @@ const logger = new Logger('CronRabbitMQModule');
           enableControllerDiscovery: true,
           exchanges: [
             { name: 'zolve.events', type: 'topic', options: { durable: true } },
-            { name: 'zolve.dlx', type: 'direct', options: { durable: true } },
+            { name: 'zolve.dlx', type: 'fanout', options: { durable: true } },
           ],
           connectionInitOptions: { wait: false, reject: false, timeout: 30000 },
           connectionManagerOptions: { heartbeatIntervalInSeconds: 30, reconnectTimeInSeconds: 5 },
