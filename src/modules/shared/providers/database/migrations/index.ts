@@ -2,7 +2,6 @@ import User1763256695093 from './1763256695093-users';
 import Phones1763382684059 from './1763382684059-phones';
 import Addresses1763450000000 from './1763450000000-addresses';
 import UserAddresses1763450000001 from './1763450000001-user-addresses';
-import IDStrategyBenchmark1763560000000 from './1763560000000-id-strategy-benchmark';
 import Emails1763600000000 from './1763600000000-emails';
 import UpdateUsers1763600000001 from './1763600000001-update-users';
 import UserEmails1763600000002 from './1763600000002-user-emails';
@@ -30,7 +29,6 @@ export const migrations = [
   Phones1763382684059,
   Addresses1763450000000,
   UserAddresses1763450000001,
-  IDStrategyBenchmark1763560000000,
   Emails1763600000000,
   UpdateUsers1763600000001,
   UserEmails1763600000002,
