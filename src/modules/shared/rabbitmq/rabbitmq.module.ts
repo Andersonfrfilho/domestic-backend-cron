@@ -6,13 +6,11 @@ const logger = new Logger('CronRabbitMQModule');
 @Module({
   imports: [
     RabbitMQModule.forRootAsync({
-      useFactory: () => {
+      useFactory: async () => {
+        await new Promise(resolve => setImmediate(resolve));
         const uri =
           process.env.RABBITMQ_URL ||
           `amqp://${process.env.QUEUE_RABBITMQ_USER || 'guest'}:${process.env.QUEUE_RABBITMQ_PASS || 'guest'}@${process.env.QUEUE_RABBITMQ_HOST || 'localhost'}:${process.env.QUEUE_RABBITMQ_PORT || '5672'}/`;
-
-        console.log('[CronRabbitMQ] URI:', uri.replace(/:\w+@/, ':****@'));
-        console.log('[CronRabbitMQ] HOST:', process.env.QUEUE_RABBITMQ_HOST);
 
         if (uri.includes('guest') || uri.includes('localhost')) {
           logger.warn(
