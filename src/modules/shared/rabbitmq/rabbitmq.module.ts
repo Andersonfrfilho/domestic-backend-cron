@@ -2,26 +2,40 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { Logger, Module } from '@nestjs/common';
 
 const logger = new Logger('CronRabbitMQModule');
+const LIFECYCLE_LOG_PREFIX = '🐰 RabbitMQ';
 
 @Module({
   imports: [
     RabbitMQModule.forRootAsync({
       useFactory: async () => {
+        console.log(`${LIFECYCLE_LOG_PREFIX} [INIT] Factory invoked - starting environment variable loading phase`);
+
         await new Promise(resolve => setImmediate(resolve));
+        console.log(`${LIFECYCLE_LOG_PREFIX} [INIT] setImmediate() resolved - env vars now accessible`);
+
+        const user = process.env.QUEUE_RABBITMQ_USER;
+        const pass = process.env.QUEUE_RABBITMQ_PASS;
+        const host = process.env.QUEUE_RABBITMQ_HOST;
+        const port = process.env.QUEUE_RABBITMQ_PORT;
+
+        console.log(`${LIFECYCLE_LOG_PREFIX} [ENV] User loaded: ${user ? `✓ ${user}` : '✗ not set'}`);
+        console.log(`${LIFECYCLE_LOG_PREFIX} [ENV] Pass loaded: ${pass ? '✓ set' : '✗ not set'}`);
+        console.log(`${LIFECYCLE_LOG_PREFIX} [ENV] Host loaded: ${host ? `✓ ${host}` : '✗ not set'}`);
+        console.log(`${LIFECYCLE_LOG_PREFIX} [ENV] Port loaded: ${port ? `✓ ${port}` : '✗ not set'}`);
+
         const uri =
           process.env.RABBITMQ_URL ||
-          `amqp://${process.env.QUEUE_RABBITMQ_USER || 'guest'}:${process.env.QUEUE_RABBITMQ_PASS || 'guest'}@${process.env.QUEUE_RABBITMQ_HOST || 'localhost'}:${process.env.QUEUE_RABBITMQ_PORT || '5672'}/`;
+          `amqp://${user || 'guest'}:${pass || 'guest'}@${host || 'localhost'}:${port || '5672'}/`;
 
-        console.log('🔍 CronRabbitMQModule URI:', uri);
-        console.log('🔍 QUEUE_RABBITMQ_USER:', process.env.QUEUE_RABBITMQ_USER);
-        console.log('🔍 QUEUE_RABBITMQ_HOST:', process.env.QUEUE_RABBITMQ_HOST);
-        console.log('🔍 QUEUE_RABBITMQ_PORT:', process.env.QUEUE_RABBITMQ_PORT);
+        console.log(`${LIFECYCLE_LOG_PREFIX} [URI] Constructed: amqp://***:***@${host || 'localhost'}:${port || '5672'}/`);
 
         if (uri.includes('guest') || uri.includes('localhost')) {
           logger.warn(
             'RabbitMQ configured with default credentials or localhost — verify QUEUE_RABBITMQ_* env vars in production',
           );
         }
+
+        console.log(`${LIFECYCLE_LOG_PREFIX} [CONFIG] Returning RabbitMQModule config with enableControllerDiscovery: true`);
 
         return {
           uri,
