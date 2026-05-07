@@ -7,20 +7,27 @@ const logger = new Logger('CronRabbitMQModule');
   imports: [
     RabbitMQModule.forRootAsync({
       useFactory: async () => {
+        console.log('🔍 [FACTORY START] Entering factory');
+        console.log('🔍 [BEFORE DELAY] env.USER=', process.env.QUEUE_RABBITMQ_USER, 'env.HOST=', process.env.QUEUE_RABBITMQ_HOST);
+
         await new Promise(resolve => setTimeout(resolve, 500));
 
+        console.log('🔍 [AFTER 500ms] env.USER=', process.env.QUEUE_RABBITMQ_USER, 'env.HOST=', process.env.QUEUE_RABBITMQ_HOST);
+
         const rabbitmqUrl = process.env.RABBITMQ_URL;
-        const user = process.env.QUEUE_RABBITMQ_USER || 'guest';
-        const pass = process.env.QUEUE_RABBITMQ_PASS || 'guest';
-        const host = process.env.QUEUE_RABBITMQ_HOST || 'localhost';
-        const port = process.env.QUEUE_RABBITMQ_PORT || '5672';
+        const user = process.env.QUEUE_RABBITMQ_USER;
+        const pass = process.env.QUEUE_RABBITMQ_PASS;
+        const host = process.env.QUEUE_RABBITMQ_HOST;
+        const port = process.env.QUEUE_RABBITMQ_PORT;
 
-        const uri = rabbitmqUrl || `amqp://${user}:${pass}@${host}:${port}/`;
+        console.log('🔍 [RAW VALUES] user=', user, 'pass=', pass ? 'SET' : 'UNSET', 'host=', host, 'port=', port);
 
-        console.log('🔍 CronRabbitMQModule URI:', uri);
-        console.log('🔍 QUEUE_RABBITMQ_USER:', process.env.QUEUE_RABBITMQ_USER);
-        console.log('🔍 QUEUE_RABBITMQ_HOST:', process.env.QUEUE_RABBITMQ_HOST);
-        console.log('🔍 QUEUE_RABBITMQ_PORT:', process.env.QUEUE_RABBITMQ_PORT);
+        const uri = rabbitmqUrl || `amqp://${user || 'guest'}:${pass || 'guest'}@${host || 'localhost'}:${port || '5672'}/`;
+
+        console.log('🔍 [FINAL URI]:', uri);
+        console.log('🔍 [PARSED] QUEUE_RABBITMQ_USER:', process.env.QUEUE_RABBITMQ_USER);
+        console.log('🔍 [PARSED] QUEUE_RABBITMQ_HOST:', process.env.QUEUE_RABBITMQ_HOST);
+        console.log('🔍 [PARSED] QUEUE_RABBITMQ_PORT:', process.env.QUEUE_RABBITMQ_PORT);
 
         if (uri.includes('guest') || uri.includes('localhost')) {
           logger.warn(
