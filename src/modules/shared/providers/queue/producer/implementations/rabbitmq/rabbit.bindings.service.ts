@@ -10,12 +10,16 @@ export class RabbitBindingsService implements OnModuleInit {
   constructor(private readonly amqpConnection: AmqpConnection) {}
 
   async onModuleInit() {
+    console.log('🔴 RabbitBindingsService.onModuleInit() called');
     try {
+      console.log('🟡 Waiting for channel...');
       await this.waitForChannel();
+      console.log('🟢 Creating bindings...');
       await this.createBindings();
       console.log('✅ RabbitMQ bindings created successfully');
     } catch (error) {
-      console.error('❌ Error creating RabbitMQ bindings:', error);
+      console.error('❌ Error creating RabbitMQ bindings:', error instanceof Error ? error.message : String(error));
+      console.error('Stack:', error instanceof Error ? error.stack : '');
     }
   }
 
