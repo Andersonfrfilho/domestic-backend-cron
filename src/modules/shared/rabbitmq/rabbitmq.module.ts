@@ -9,9 +9,7 @@ const logger = new Logger('CronRabbitMQModule');
     RabbitMQModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
-        const LIFECYCLE_LOG_PREFIX = '🐰 RabbitMQ';
-
-        console.log(`${LIFECYCLE_LOG_PREFIX} [INIT] Factory invoked - starting environment variable loading phase`);
+        console.log('🐰 [DEBUG] ConfigService keys:', Object.keys(configService));
 
         const user = configService.get('QUEUE_RABBITMQ_USER');
         const pass = configService.get('QUEUE_RABBITMQ_PASS');
@@ -19,20 +17,10 @@ const logger = new Logger('CronRabbitMQModule');
         const port = configService.get('QUEUE_RABBITMQ_PORT');
         const rabbitmqUrl = configService.get('RABBITMQ_URL');
 
-        console.log(`${LIFECYCLE_LOG_PREFIX} [ENV] User loaded: ${user ? '✓ set' : '✗ not set'}`);
-        console.log(`${LIFECYCLE_LOG_PREFIX} [ENV] Pass loaded: ${pass ? '✓ set' : '✗ not set'}`);
-        console.log(`${LIFECYCLE_LOG_PREFIX} [ENV] Host loaded: ${host ? `✓ ${host}` : '✗ not set'}`);
-        console.log(`${LIFECYCLE_LOG_PREFIX} [ENV] Port loaded: ${port ? `✓ ${port}` : '✗ not set'}`);
-        console.log(`${LIFECYCLE_LOG_PREFIX} [ENV] RabbitMQ URL loaded: ${rabbitmqUrl ? '✓ set' : '✗ not set'}`);
+        console.log(`🐰 [ENV] Raw values: user="${user}", pass="${pass}", host="${host}", port="${port}", url="${rabbitmqUrl}"`);
 
         const uri = rabbitmqUrl || `amqp://${user}:${pass}@${host}:${port}/`;
-        console.log(`${LIFECYCLE_LOG_PREFIX} [URI] Constructed: ${rabbitmqUrl ? '[from RABBITMQ_URL]' : `amqp://***:***@${host}:${port}/`}`);
-
-        if (!user || !pass || !host || !port) {
-          logger.error(
-            `RabbitMQ missing required env vars - User: ${user ? '✓' : '✗'}, Pass: ${pass ? '✓' : '✗'}, Host: ${host ? '✓' : '✗'}, Port: ${port ? '✓' : '✗'}`,
-          );
-        }
+        console.log(`🐰 [URI] Final URI: amqp://***:***@${host}:${port}/`);
 
         return {
           uri,
