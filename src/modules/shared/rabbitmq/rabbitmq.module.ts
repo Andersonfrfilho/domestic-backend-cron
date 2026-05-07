@@ -7,27 +7,40 @@ const logger = new Logger('CronRabbitMQModule');
   imports: [
     RabbitMQModule.forRootAsync({
       useFactory: async () => {
-        console.log('🔍 [FACTORY START] Entering factory');
-        console.log('🔍 [BEFORE DELAY] env.USER=', process.env.QUEUE_RABBITMQ_USER, 'env.HOST=', process.env.QUEUE_RABBITMQ_HOST);
+        console.log('🔍 Factory starting - waiting for env vars to be available...');
 
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // Retry until all required env vars are available
+        let retries = 0;
+        let user, pass, host, port;
 
-        console.log('🔍 [AFTER 500ms] env.USER=', process.env.QUEUE_RABBITMQ_USER, 'env.HOST=', process.env.QUEUE_RABBITMQ_HOST);
+        while (!user || !pass || !host || !port) {
+          user = process.env.QUEUE_RABBITMQ_USER;
+          pass = process.env.QUEUE_RABBITMQ_PASS;
+          host = process.env.QUEUE_RABBITMQ_HOST;
+          port = process.env.QUEUE_RABBITMQ_PORT;
+
+          if (!user || !pass || !host || !port) {
+            retries++;
+            if (retries <= 10) {
+              await new Promise(resolve => setTimeout(resolve, 100));
+            } else {
+              console.log('🔍 WARNING: Env vars not available after 10 retries, using defaults');
+              user = user || 'guest';
+              pass = pass || 'guest';
+              host = host || 'localhost';
+              port = port || '5672';
+              break;
+            }
+          }
+        }
 
         const rabbitmqUrl = process.env.RABBITMQ_URL;
-        const user = process.env.QUEUE_RABBITMQ_USER;
-        const pass = process.env.QUEUE_RABBITMQ_PASS;
-        const host = process.env.QUEUE_RABBITMQ_HOST;
-        const port = process.env.QUEUE_RABBITMQ_PORT;
+        const uri = rabbitmqUrl || `amqp://${user}:${pass}@${host}:${port}/`;
 
-        console.log('🔍 [RAW VALUES] user=', user, 'pass=', pass ? 'SET' : 'UNSET', 'host=', host, 'port=', port);
-
-        const uri = rabbitmqUrl || `amqp://${user || 'guest'}:${pass || 'guest'}@${host || 'localhost'}:${port || '5672'}/`;
-
-        console.log('🔍 [FINAL URI]:', uri);
-        console.log('🔍 [PARSED] QUEUE_RABBITMQ_USER:', process.env.QUEUE_RABBITMQ_USER);
-        console.log('🔍 [PARSED] QUEUE_RABBITMQ_HOST:', process.env.QUEUE_RABBITMQ_HOST);
-        console.log('🔍 [PARSED] QUEUE_RABBITMQ_PORT:', process.env.QUEUE_RABBITMQ_PORT);
+        console.log('🔍 RabbitMQ URI:', uri);
+        console.log('🔍 QUEUE_RABBITMQ_USER:', process.env.QUEUE_RABBITMQ_USER);
+        console.log('🔍 QUEUE_RABBITMQ_HOST:', process.env.QUEUE_RABBITMQ_HOST);
+        console.log('🔍 QUEUE_RABBITMQ_PORT:', process.env.QUEUE_RABBITMQ_PORT);
 
         if (uri.includes('guest') || uri.includes('localhost')) {
           logger.warn(
