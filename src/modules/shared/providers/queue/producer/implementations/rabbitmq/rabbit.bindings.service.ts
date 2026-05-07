@@ -40,37 +40,16 @@ export class RabbitBindingsService implements OnModuleInit {
   private async createBindings() {
     const channel = this.amqpConnection.channel;
 
-    // Notifications exchange → email queue
-    await channel.bindQueue('email.notifications', 'notifications', 'email.welcome');
-    await channel.bindQueue('email.notifications', 'notifications', 'email.*');
+    // Zolve events exchange bindings (used by consumers via @RabbitSubscribe)
+    // Consumers declare their own queues with queueOptions, so we just ensure bindings exist
+    await channel.bindQueue('worker.rating', 'zolve.events', 'review.created');
+    await channel.bindQueue('worker.service-requests', 'zolve.events', 'service_request.*');
+    await channel.bindQueue('worker.notifications', 'zolve.events', 'notifications.email');
+    await channel.bindQueue('worker.notifications', 'zolve.events', 'notifications.push');
+    await channel.bindQueue('worker.provider.approval', 'zolve.events', 'provider.approved');
+    await channel.bindQueue('worker.provider.approval', 'zolve.events', 'provider.rejected');
 
-    // Audit exchange → audit queue
-    await channel.bindQueue('audit.events', 'audit', 'audit.user.created');
-    await channel.bindQueue('audit.events', 'audit', 'audit.*');
-
-    // Integration exchange → CRM queue
-    await channel.bindQueue('crm.sync', 'integration', 'integration.crm.sync');
-    await channel.bindQueue('crm.sync', 'integration', 'integration.*');
-
-    // Analytics exchange → risk analysis queue
-    await channel.bindQueue('risk.analysis', 'analytics', 'analytics.risk.analysis');
-    await channel.bindQueue('risk.analysis', 'analytics', 'analytics.*');
-
-    // Health exchange → health test queue
-    await channel.bindQueue('health.test.queue', 'health', 'health.test');
-
-    // Default exchange → default queue
-    await channel.bindQueue('default.queue', 'default', '#');
-
-    // Zolve events exchange → provider events queue
-    await channel.bindQueue('provider.events', 'zolve.events', 'provider.*');
-
-    // Zolve events exchange → service-request events queue
-    await channel.bindQueue('service-request.events', 'zolve.events', 'service_request.*');
-
-    // Dead letter bindings
-    await channel.bindQueue('email.notifications.dlq', 'notifications.dlx', '#');
-    await channel.bindQueue('crm.sync.dlq', 'integration.dlx', '#');
-    await channel.bindQueue('risk.analysis.dlq', 'analytics.dlx', '#');
+    // Dead letter queue binding
+    await channel.bindQueue('worker.dlq', 'zolve.dlx', '');
   }
 }
