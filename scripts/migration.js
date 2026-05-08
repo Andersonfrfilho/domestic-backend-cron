@@ -3,11 +3,10 @@
 const { execSync } = require('child_process');
 
 const command = process.argv[2];
-const isProd = process.env.NODE_ENV === 'production';
-
-const basePath = isProd ? 'dist' : 'src';
-const fileExt = isProd ? 'js' : 'ts';
-const executor = isProd ? 'node' : 'ts-node -r tsconfig-paths/register';
+const hasDist = require('fs').existsSync('./dist');
+const basePath = hasDist ? 'dist' : 'src';
+const fileExt = hasDist ? 'js' : 'ts';
+const executor = hasDist ? 'node' : 'ts-node -r tsconfig-paths/register';
 
 const dataSourcePath = `${basePath}/modules/shared/providers/database/implementations/postgres/postgres.database-connection.${fileExt}`;
 
