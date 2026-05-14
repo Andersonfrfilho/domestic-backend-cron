@@ -13,7 +13,8 @@ test
 docs
 logs
 *.md
-.env.example
+.env*
 jest.config.*
 .github
-makefile*.tsbuildinfo
+makefile
+*.tsbuildinfo
