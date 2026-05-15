@@ -17,7 +17,10 @@ import { JobsModule } from './modules/jobs/jobs.module';
   imports: [
     MetricsModule,
     ConfigModule,
-    LoggerModule.forRoot({ level: process.env.LOG_LEVEL || 'info' }),
+    LoggerModule.forRoot({
+      level: process.env.LOG_LEVEL || 'info',
+      interceptorExcludedPaths: ['/health', '/metrics', '**/metrics'],
+    }),
     ScheduleModule.forRoot(),
     SharedModule,
     HealthModule,

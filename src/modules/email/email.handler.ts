@@ -10,6 +10,7 @@ import type { EmailEvent } from './dtos/email.event.dto';
 
 const SUBJECTS: Record<string, string> = {
   'welcome': 'Bem-vindo à ZOLVE!',
+  'email-verification': 'Verificação de Email — ZOLVE',
   'verification-approved': 'Parabéns! Seu perfil foi verificado',
   'verification-rejected': 'Ação necessária no seu cadastro',
   'service-request-received': 'Nova solicitação de serviço',
