@@ -4,7 +4,7 @@ import { register } from 'prom-client';
 @Controller('metrics')
 export class MetricsController {
   @Get()
-  getMetrics(): string {
+  async getMetrics(): Promise<string> {
     return register.metrics();
   }
 }
