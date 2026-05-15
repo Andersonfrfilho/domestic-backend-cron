@@ -3,15 +3,16 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { PrometheusModule, makeCounterProvider, makeHistogramProvider } from '@willsoto/nestjs-prometheus';
 
 import { HttpMetricsInterceptor } from './http-metrics.interceptor';
+import { MetricsController } from './metrics.controller';
 import { CronMetricsService } from './cron-metrics.service';
 
 @Module({
   imports: [
     PrometheusModule.register({
-      path: '/metrics',
       defaultMetrics: { enabled: true },
     }),
   ],
+  controllers: [MetricsController],
   providers: [
     makeHistogramProvider({
       name: 'http_request_duration_seconds',
