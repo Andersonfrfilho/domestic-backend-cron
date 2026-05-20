@@ -59,19 +59,10 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "GitHub Actions"
 
-          IMAGE_TAG="ghcr.io/andersonfrfilho/domestic-backend-cron:main"
           BUILD_TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
 
-          echo "Updating deployment with image: $IMAGE_TAG"
-          echo "Build timestamp: $BUILD_TIMESTAMP"
-          echo "Commit: ${{ github.sha }}"
-
-          # Update or add build annotation to trigger deployment even if image tag is same
-          if grep -q "build.timestamp" cron/cron.deployment.yaml; then
-            sed -i "s/build.timestamp:.*/build.timestamp: \"$BUILD_TIMESTAMP\"/" cron/cron.deployment.yaml
-          else
-            sed -i "/metadata:/a\\    annotations:\\n      build.timestamp: \"$BUILD_TIMESTAMP\"\\n      build.commit: \"${{ github.sha }}\"" cron/cron.deployment.yaml
-          fi
+          sed -i "s/build.timestamp:.*/build.timestamp: \"$BUILD_TIMESTAMP\"/" cron/cron.deployment.yaml
+          sed -i "s/build.commit:.*/build.commit: \"${{ github.sha }}\"/" cron/cron.deployment.yaml
 
           git add cron/cron.deployment.yaml
 
@@ -79,12 +70,5 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "chore: update cron image to ${{ github.sha }}"
-            echo "Pushing to domestic-kubernets..."
             git push https://x-access-token:${{ secrets.KUBERNETS_PAT }}@github.com/Andersonfrfilho/domestic-kubernets.git
-            if [ $? -eq 0 ]; then
-              echo "✅ Push successful"
-            else
-              echo "❌ Push failed"
-              exit 1
-            fi
           fi
