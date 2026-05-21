@@ -5,6 +5,7 @@ import { PrometheusModule, makeCounterProvider, makeHistogramProvider } from '@w
 import { HttpMetricsInterceptor } from './http-metrics.interceptor';
 import { OpenTelemetryRequestIdInterceptor } from '@modules/shared/interceptors/opentelemetry-request-id.interceptor';
 import { TraceStackInterceptor } from '@modules/shared/interceptors/trace-stack.interceptor';
+import { RequestIdContextInterceptor } from '@modules/shared/interceptors/request-id-context.interceptor';
 import { TraceStackService } from '@modules/shared/services/trace-stack.service';
 import { CronMetricsService } from './cron-metrics.service';
 
@@ -41,6 +42,7 @@ import { CronMetricsService } from './cron-metrics.service';
     TraceStackService,
     HttpMetricsInterceptor,
     OpenTelemetryRequestIdInterceptor,
+    RequestIdContextInterceptor,
     CronMetricsService,
     {
       provide: APP_INTERCEPTOR,
@@ -49,6 +51,10 @@ import { CronMetricsService } from './cron-metrics.service';
     {
       provide: APP_INTERCEPTOR,
       useExisting: HttpMetricsInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: RequestIdContextInterceptor,
     },
     {
       provide: APP_INTERCEPTOR,
