@@ -31,7 +31,7 @@ export class HttpMetricsInterceptor implements NestInterceptor {
       method,
       route,
       status_code: statusCode,
-      service: process.env.OTEL_SERVICE_NAME ?? 'domestic-cron',
+      service: process.env.OTEL_SERVICE_NAME ?? 'domestic-api',
     };
     this.histogram.observe(labels, duration);
     this.counter.inc(labels);

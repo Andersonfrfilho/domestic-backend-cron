@@ -8,6 +8,7 @@ import { CronMetricsService } from './cron-metrics.service';
 @Module({
   imports: [
     PrometheusModule.register({
+      path: '/metrics',
       defaultMetrics: { enabled: true },
     }),
   ],
