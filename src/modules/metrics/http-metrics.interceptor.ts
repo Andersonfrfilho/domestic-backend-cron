@@ -2,9 +2,12 @@ import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nes
 import { InjectMetric } from '@willsoto/nestjs-prometheus';
 import { Counter, Histogram } from 'prom-client';
 import { Observable, tap } from 'rxjs';
+import { customAlphabet } from 'nanoid';
 
 @Injectable()
 export class HttpMetricsInterceptor implements NestInterceptor {
+  private readonly nanoid = customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 8);
+
   constructor(
     @InjectMetric('http_request_duration_seconds') private readonly histogram: Histogram,
     @InjectMetric('http_requests_total') private readonly counter: Counter,
@@ -16,6 +19,11 @@ export class HttpMetricsInterceptor implements NestInterceptor {
     const startTime = Date.now();
     const method: string = req.method ?? 'UNKNOWN';
     const route: string = (req.routerPath ?? req.routeOptions?.url ?? req.url ?? 'unknown') as string;
+
+    // Usar requestId existente ou gerar novo
+    const requestId = req.headers['x-request-id'] || this.nanoid();
+    req.requestId = requestId;
+    res.setHeader('X-Request-ID', requestId);
 
     return next.handle().pipe(
       tap({
