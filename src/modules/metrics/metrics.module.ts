@@ -3,6 +3,9 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { PrometheusModule, makeCounterProvider, makeHistogramProvider } from '@willsoto/nestjs-prometheus';
 
 import { HttpMetricsInterceptor } from './http-metrics.interceptor';
+import { OpenTelemetryRequestIdInterceptor } from '@modules/shared/interceptors/opentelemetry-request-id.interceptor';
+import { TraceStackInterceptor } from '@modules/shared/interceptors/trace-stack.interceptor';
+import { TraceStackService } from '@modules/shared/services/trace-stack.service';
 import { CronMetricsService } from './cron-metrics.service';
 
 @Module({
@@ -35,11 +38,21 @@ import { CronMetricsService } from './cron-metrics.service';
       labelNames: ['job_name', 'status', 'service'],
       buckets: [0.1, 0.5, 1, 5, 10, 30, 60, 120, 300, 600],
     }),
+    TraceStackService,
     HttpMetricsInterceptor,
+    OpenTelemetryRequestIdInterceptor,
     CronMetricsService,
     {
       provide: APP_INTERCEPTOR,
+      useClass: TraceStackInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
       useExisting: HttpMetricsInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: OpenTelemetryRequestIdInterceptor,
     },
   ],
   exports: [CronMetricsService],
