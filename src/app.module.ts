@@ -19,12 +19,6 @@ import { JobsModule } from './modules/jobs/jobs.module';
     ConfigModule,
     LoggerModule.forRoot({
       level: process.env.LOG_LEVEL || 'info',
-      enableTraceStack: process.env.NODE_ENV !== 'production',
-      fileTransport: {
-        enabled: process.env.NODE_ENV !== 'production',
-        dir: 'logs',
-        filename: 'cron-%DATE%.log',
-      },
     }),
     ScheduleModule.forRoot(),
     SharedModule,
