@@ -22,8 +22,8 @@ jobs:
           repository: Andersonfrfilho/backend-package-nestjs
           path: backend-package-nestjs-repo
 
-      - name: Create symlink for Docker build context
-        run: ln -s ../backend-package-nestjs-repo ${{ github.workspace }}/backend-package-nestjs
+      - name: Copy backend-package-nestjs to service repo
+        run: cp -r ${{ github.workspace }}/backend-package-nestjs-repo ${{ github.workspace }}/backend-package-nestjs
 
       - name: Set lowercase repository name
         run: echo "REPO_LC=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
