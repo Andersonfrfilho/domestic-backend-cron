@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { TraceMethod } from '@adatechnology/shared';
+import { TraceMethod } from '@adatechnology/logger';
 
 import { ProviderProfile } from '@modules/shared/providers/database/entities/provider-profile.entity';
 import { CONNECTIONS_NAMES } from '@modules/shared/providers/database/database.constant';

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { TraceMethod } from '@adatechnology/shared';
+import { TraceMethod } from '@adatechnology/logger';
 
 import { User } from '@modules/shared/providers/database/entities/user.entity';
 import { CONNECTIONS_NAMES } from '@modules/shared/providers/database/database.constant';

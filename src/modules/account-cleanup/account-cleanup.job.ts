@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { TraceMethod } from '@adatechnology/shared';
+import { TraceMethod } from '@adatechnology/logger';
 
 import { CronLockService } from '@modules/shared/lock/cron-lock.service';
 import { CronMetricsService } from '@modules/metrics/cron-metrics.service';

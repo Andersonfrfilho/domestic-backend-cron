@@ -19,7 +19,6 @@ import { JobsModule } from './modules/jobs/jobs.module';
     ConfigModule,
     LoggerModule.forRoot({
       level: process.env.LOG_LEVEL || 'info',
-      enableTraceStack: true,
     }),
     ScheduleModule.forRoot(),
     SharedModule,
