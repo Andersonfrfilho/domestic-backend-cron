@@ -10,6 +10,9 @@ import { Observable } from 'rxjs';
  */
 @Injectable()
 export class OpenTelemetryRequestIdInterceptor implements NestInterceptor {
+  private readonly REQUEST_ID_KEY = Symbol.for('request.id');
+  private readonly CORRELATION_ID_KEY = Symbol.for('correlation.id');
+
   intercept(executionContext: ExecutionContext, next: CallHandler): Observable<any> {
     const req = executionContext.switchToHttp().getRequest();
     const requestId = (req as any).requestId;
@@ -33,8 +36,8 @@ export class OpenTelemetryRequestIdInterceptor implements NestInterceptor {
     // tenha acesso ao requestId, inclusive bibliotecas externas
     return context.with(
       context.active()
-        .setValue('request.id', requestId)
-        .setValue('correlation.id', requestId),
+        .setValue(this.REQUEST_ID_KEY, requestId)
+        .setValue(this.CORRELATION_ID_KEY, requestId),
       () => next.handle(),
     );
   }
