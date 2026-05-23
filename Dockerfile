@@ -9,23 +9,17 @@ FROM node:25-alpine AS builder
 
 WORKDIR /workspace
 
-# Copy backend-package-nestjs for building libraries
+# Copy backend-package-nestjs for dependency resolution
 COPY backend-package-nestjs ./backend-package-nestjs
-
-# Build backend-package-nestjs libraries
-RUN npm install -g pnpm && \
-    cd backend-package-nestjs && \
-    pnpm install && \
-    pnpm run build && \
-    cd ..
 
 # Copy service source (. because build context is the service repo root)
 COPY . ./app
 WORKDIR /workspace/app
 
-# Install service dependencies (will resolve file:// paths correctly)
-RUN rm -f pnpm-lock.yaml && \
-    npm install
+# Install dependencies - pnpm will automatically resolve and link workspace packages
+RUN npm install -g pnpm && \
+    rm -f pnpm-lock.yaml && \
+    pnpm install
 
 # Build service
 RUN npm run build
