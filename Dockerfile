@@ -19,8 +19,8 @@ RUN npm install -g pnpm && \
     npm run build && \
     cd ..
 
-# Copy service source
-COPY domestic-backend-cron ./app
+# Copy service source (. because build context is the service repo root)
+COPY . ./app
 WORKDIR /workspace/app
 
 # Install service dependencies (will resolve file:// paths correctly)
