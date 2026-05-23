@@ -57,8 +57,7 @@ export class TraceLoggerService {
     return {
       traceId: spanContext?.traceId || 'no-trace',
       spanId: spanContext?.spanId || 'no-span',
-      parentSpan: spanContext?.parentSpanId,
-      requestId: span?.attributes?.['request.id'] as string,
+      requestId: (context.active().getValue(Symbol.for('request.id')) as string) || undefined,
     };
   }
 
@@ -99,8 +98,7 @@ export class TraceLoggerService {
    */
   getJaegerLink(jaegerUrl: string = 'http://jaeger.domestic.local'): string {
     const traceInfo = this.getTraceInfo();
-    const span = trace.getActiveSpan();
-    const service = span?.attributes?.['service.name'] || 'unknown';
+    const service = process.env.OTEL_SERVICE_NAME || 'unknown';
 
     return `${jaegerUrl}/search?service=${service}&traceID=${traceInfo.traceId}`;
   }
