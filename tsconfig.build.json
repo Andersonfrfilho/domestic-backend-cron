@@ -10,6 +10,7 @@
     "scripts",
     "jest.config.*",
     "**/*.spec.ts",
-    "**/*.test.ts"
+    "**/*.test.ts",
+    "backend-package-nestjs"
   ]
 }
