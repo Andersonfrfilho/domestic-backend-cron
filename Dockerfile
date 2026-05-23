@@ -18,6 +18,7 @@ WORKDIR /workspace/app
 
 # Install dependencies
 RUN npm install -g pnpm && \
+    rm -f pnpm-lock.yaml && \
     pnpm install
 
 # Build service
