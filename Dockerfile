@@ -18,6 +18,7 @@ WORKDIR /workspace/app
 
 # Install dependencies and build workspace libraries
 RUN npm install -g pnpm && \
+    pnpm clean --lockfile && \
     pnpm install && \
     pnpm --filter "@adatechnology/*" run build
 
