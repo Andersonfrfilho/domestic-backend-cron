@@ -7,18 +7,27 @@ ARG BUILD_DATE="unknown"
 # ===== STAGE 1: Build =====
 FROM node:25-alpine AS builder
 
-WORKDIR /app
+WORKDIR /workspace
 
-# Copy all package files
-COPY package.json pnpm-lock.yaml ./
+# Copy backend-package-nestjs for building libraries
+COPY backend-package-nestjs ./backend-package-nestjs
 
-# Convert pnpm-lock to npm format or use pnpm with clean install
+# Build backend-package-nestjs libraries
 RUN npm install -g pnpm && \
-    rm -f pnpm-lock.yaml && \
+    cd backend-package-nestjs && \
+    npm install && \
+    npm run build && \
+    cd ..
+
+# Copy service source
+COPY domestic-backend-cron ./app
+WORKDIR /workspace/app
+
+# Install service dependencies (will resolve file:// paths correctly)
+RUN rm -f pnpm-lock.yaml && \
     npm install
 
-COPY . .
-
+# Build service
 RUN npm run build
 
 # Compila migrations separadamente (se existirem)
@@ -50,18 +59,17 @@ LABEL git.commit.hash="${GIT_COMMIT_HASH}" \
 
 WORKDIR /app
 
-# Copia apenas dependências de produção
-COPY --from=builder /app/node_modules ./node_modules
+# Copy only production dependencies
+COPY --from=builder /workspace/app/node_modules ./node_modules
 
-# Copia apenas arquivos compilados e necessários
-COPY --from=builder /app/tsconfig.json ./
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/scripts ./scripts
-COPY --from=builder /app/package*.json ./
+# Copy only compiled files and necessary configs
+COPY --from=builder /workspace/app/tsconfig.json ./
+COPY --from=builder /workspace/app/dist ./dist
+COPY --from=builder /workspace/app/scripts ./scripts
+COPY --from=builder /workspace/app/package*.json ./
 
-# Cria pasta de logs
+# Create logs directory
 RUN mkdir -p logs
 
-# PRODUÇÃO: Inicia diretamente (sem rodar migrations)
-# Migrations devem ser rodadas manualmente ou via pipeline CI/CD
+# Start application (migrations should be run separately)
 CMD ["node", "dist/main"]
