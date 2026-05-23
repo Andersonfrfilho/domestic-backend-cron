@@ -22,11 +22,11 @@ RUN npm install -g pnpm && \
     pnpm install
 
 # Build service
-RUN npm run build
+RUN pnpm run build
 
-# Compila migrations separadamente (se existirem)
+# Compile migrations separately (if they exist)
 RUN if ls src/modules/shared/providers/database/migrations/*.ts 2>/dev/null; then \
-    npx tsc src/modules/shared/providers/database/migrations/*.ts \
+    pnpm exec tsc src/modules/shared/providers/database/migrations/*.ts \
       --outDir dist/modules/shared/providers/database/migrations \
       --module commonjs \
       --target es2020 \
@@ -34,7 +34,7 @@ RUN if ls src/modules/shared/providers/database/migrations/*.ts 2>/dev/null; the
       --skipLibCheck \
       --strict false; \
   fi && \
-  npm prune --omit=dev
+  pnpm prune --prod
 
 # ===== STAGE 2: Runtime (Production) =====
 FROM node:25-alpine
