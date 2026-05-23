@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
-import { TraceMethod } from '@adatechnology/logger';
 
 import { ProviderProfile } from '@modules/shared/providers/database/entities/provider-profile.entity';
 import { CONNECTIONS_NAMES } from '@modules/shared/providers/database/database.constant';
@@ -24,7 +23,6 @@ export class WeeklyReportService {
     private readonly amqp: AmqpConnection,
   ) {}
 
-  @TraceMethod()
   async run(): Promise<WeeklyReportResult> {
     const start = Date.now();
     let reports_sent = 0;
