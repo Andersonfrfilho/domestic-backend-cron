@@ -22,7 +22,7 @@ export class RequestTracingInterceptor implements NestInterceptor {
 
       // Adicionar ao contexto OpenTelemetry para propagação
       return executionContext.with(
-        context.active().setValue('request.id', requestId),
+        executionContext.active().setValue('request.id', requestId),
         () => next.handle(),
       );
     }

@@ -2,11 +2,13 @@ import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nes
 import { InjectMetric } from '@willsoto/nestjs-prometheus';
 import { Counter, Histogram } from 'prom-client';
 import { Observable, tap } from 'rxjs';
-import { customAlphabet } from 'nanoid';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class HttpMetricsInterceptor implements NestInterceptor {
-  private readonly nanoid = customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 8);
+  private generateId(): string {
+    return uuidv4().substring(0, 8).toUpperCase();
+  }
 
   constructor(
     @InjectMetric('http_request_duration_seconds') private readonly histogram: Histogram,
@@ -21,7 +23,7 @@ export class HttpMetricsInterceptor implements NestInterceptor {
     const route: string = (req.routerPath ?? req.routeOptions?.url ?? req.url ?? 'unknown') as string;
 
     // Usar requestId existente ou gerar novo
-    const requestId = req.headers['x-request-id'] || this.nanoid();
+    const requestId = req.headers['x-request-id'] || this.generateId();
     req.requestId = requestId;
     res.setHeader('X-Request-ID', requestId);
 
