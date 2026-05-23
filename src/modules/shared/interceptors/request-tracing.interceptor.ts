@@ -8,8 +8,8 @@ import { Observable } from 'rxjs';
  */
 @Injectable()
 export class RequestTracingInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const req = context.switchToHttp().getRequest();
+  intercept(executionContext: ExecutionContext, next: CallHandler): Observable<any> {
+    const req = executionContext.switchToHttp().getRequest();
     const requestId = (req as any).requestId;
 
     if (requestId) {
@@ -21,7 +21,7 @@ export class RequestTracingInterceptor implements NestInterceptor {
       }
 
       // Adicionar ao contexto OpenTelemetry para propagação
-      return context.with(
+      return executionContext.with(
         context.active().setValue('request.id', requestId),
         () => next.handle(),
       );

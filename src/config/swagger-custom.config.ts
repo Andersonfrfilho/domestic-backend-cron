@@ -1,4 +1,4 @@
-import { SwaggerCustomOptions } from '@nestjs/swagger/dist/interfaces/swagger-custom-options.interface';
+import { SwaggerCustomOptions } from '@nestjs/swagger';
 
 import { SWAGGER_CUSTOM_CSS } from '@config/constants';
 import { EnvironmentProviderInterface } from '@config/interfaces/environment.interface';
