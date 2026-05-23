@@ -16,17 +16,17 @@ COPY backend-package-nestjs ./backend-package-nestjs
 COPY . ./app
 WORKDIR /workspace/app
 
-# Install dependencies - pnpm will automatically resolve and link workspace packages
+# Install dependencies
 RUN npm install -g pnpm && \
     rm -f pnpm-lock.yaml && \
-    pnpm install
+    npm install
 
 # Build service
-RUN pnpm run build
+RUN npm run build
 
 # Compile migrations separately (if they exist)
 RUN if ls src/modules/shared/providers/database/migrations/*.ts 2>/dev/null; then \
-    pnpm exec tsc src/modules/shared/providers/database/migrations/*.ts \
+    npx tsc src/modules/shared/providers/database/migrations/*.ts \
       --outDir dist/modules/shared/providers/database/migrations \
       --module commonjs \
       --target es2020 \
@@ -34,7 +34,7 @@ RUN if ls src/modules/shared/providers/database/migrations/*.ts 2>/dev/null; the
       --skipLibCheck \
       --strict false; \
   fi && \
-  pnpm prune --prod
+  npm prune --omit=dev
 
 # ===== STAGE 2: Runtime (Production) =====
 FROM node:25-alpine
