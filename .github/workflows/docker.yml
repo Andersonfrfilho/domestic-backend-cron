@@ -20,7 +20,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Andersonfrfilho/backend-package-nestjs
-          path: backend-package-nestjs
+          path: backend-package-nestjs-repo
+
+      - name: Create symlink for Docker build context
+        run: |
+          cd ${{ github.workspace }}/$(echo '${{ github.repository }}' | cut -d'/' -f2)
+          ln -s ../backend-package-nestjs-repo backend-package-nestjs
 
       - name: Set lowercase repository name
         run: echo "REPO_LC=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
