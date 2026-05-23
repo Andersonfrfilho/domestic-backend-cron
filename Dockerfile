@@ -19,7 +19,8 @@ WORKDIR /workspace/app
 # Install dependencies
 RUN npm install -g pnpm && \
     rm -f pnpm-lock.yaml && \
-    pnpm install
+    pnpm install --ignore-scripts && \
+    pnpm rebuild
 
 # Build service
 RUN npm run build
