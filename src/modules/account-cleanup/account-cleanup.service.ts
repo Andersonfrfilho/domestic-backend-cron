@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
+import { TraceMethod } from '@adatechnology/shared';
 
 import { User } from '@modules/shared/providers/database/entities/user.entity';
 import { CONNECTIONS_NAMES } from '@modules/shared/providers/database/database.constant';
@@ -25,6 +26,7 @@ export class AccountCleanupService {
     private readonly dataSource: DataSource,
   ) {}
 
+  @TraceMethod()
   async run(): Promise<AccountCleanupResult> {
     const start = Date.now();
     let accounts_deleted = 0;

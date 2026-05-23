@@ -18,6 +18,12 @@ export class HttpMetricsInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const req = context.switchToHttp().getRequest();
     const res = context.switchToHttp().getResponse();
+
+    // Only apply HTTP metrics if we're in an actual HTTP context
+    if (!req?.method || typeof res?.setHeader !== 'function') {
+      return next.handle();
+    }
+
     const startTime = Date.now();
     const method: string = req.method ?? 'UNKNOWN';
     const route: string = (req.routerPath ?? req.routeOptions?.url ?? req.url ?? 'unknown') as string;

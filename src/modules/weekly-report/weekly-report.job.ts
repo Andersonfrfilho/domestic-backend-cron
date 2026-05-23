@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
+import { TraceMethod } from '@adatechnology/shared';
 
 import { CronLockService } from '@modules/shared/lock/cron-lock.service';
 import { CronMetricsService } from '@modules/metrics/cron-metrics.service';
@@ -20,6 +21,8 @@ export class WeeklyReportJob {
   ) {}
 
   @Cron(process.env.CRON_WEEKLY_REPORT ?? '0 8 * * 1')
+  @TraceMethod()
+
   async run(): Promise<void> {
     const acquired = await this.lock.acquire(JOB_NAME, JOB_TTL_MS);
     if (!acquired) return;

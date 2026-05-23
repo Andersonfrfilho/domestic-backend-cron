@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
+import { TraceMethod } from '@adatechnology/shared';
 
 import { ServiceRequest } from '@modules/shared/providers/database/entities/service-request.entity';
 import { CONNECTIONS_NAMES } from '@modules/shared/providers/database/database.constant';
@@ -22,6 +23,7 @@ export class RequestReminderService {
     private readonly amqp: AmqpConnection,
   ) {}
 
+  @TraceMethod()
   async run(): Promise<RequestReminderResult> {
     const start = Date.now();
     let reminders_sent = 0;

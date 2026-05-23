@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { TraceMethod } from '@adatechnology/shared';
 
 import { ProviderProfile } from '@modules/shared/providers/database/entities/provider-profile.entity';
 import { CONNECTIONS_NAMES } from '@modules/shared/providers/database/database.constant';
@@ -23,6 +24,7 @@ export class RatingRecalculatorService {
     private readonly providerRepo: Repository<ProviderProfile>,
   ) {}
 
+  @TraceMethod()
   async run(): Promise<RatingRecalculatorResult> {
     const start = Date.now();
     let providers_updated = 0;
