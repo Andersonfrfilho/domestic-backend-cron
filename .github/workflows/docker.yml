@@ -16,6 +16,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Checkout backend-package-nestjs
+        uses: actions/checkout@v4
+        with:
+          repository: Andersonfrfilho/backend-package-nestjs
+          path: backend-package-nestjs
+
       - name: Set lowercase repository name
         run: echo "REPO_LC=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
