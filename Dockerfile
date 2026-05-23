@@ -9,9 +9,6 @@ FROM node:25-alpine AS builder
 
 WORKDIR /workspace
 
-# Copy backend libraries for npm file:// dependencies (before service code)
-COPY backend-package-nestjs ./backend-package-nestjs
-
 # Copy service source (. because build context is the service repo root)
 COPY . ./app
 WORKDIR /workspace/app
