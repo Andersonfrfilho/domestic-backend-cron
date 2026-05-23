@@ -16,11 +16,10 @@ COPY backend-package-nestjs ./backend-package-nestjs
 COPY . ./app
 WORKDIR /workspace/app
 
-# Install dependencies
+# Install dependencies and build workspace libraries
 RUN npm install -g pnpm && \
-    rm -f pnpm-lock.yaml && \
-    pnpm install --ignore-scripts && \
-    pnpm rebuild
+    pnpm install && \
+    pnpm --filter "@adatechnology/*" run build
 
 # Build service
 RUN npm run build
