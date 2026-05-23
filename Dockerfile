@@ -15,8 +15,8 @@ COPY backend-package-nestjs ./backend-package-nestjs
 # Build backend-package-nestjs libraries
 RUN npm install -g pnpm && \
     cd backend-package-nestjs && \
-    npm install && \
-    npm run build && \
+    pnpm install && \
+    pnpm run build && \
     cd ..
 
 # Copy service source (. because build context is the service repo root)
