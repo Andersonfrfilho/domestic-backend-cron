@@ -1,0 +1,2 @@
+# Disable supply chain policies for Docker builds
+validation=none

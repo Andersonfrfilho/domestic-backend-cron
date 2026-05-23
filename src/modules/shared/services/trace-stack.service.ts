@@ -12,7 +12,7 @@ import { context } from '@opentelemetry/api';
  */
 @Injectable()
 export class TraceStackService {
-  private readonly STACK_KEY = 'trace:stack';
+  private readonly STACK_KEY = Symbol.for('trace:stack');
 
   /**
    * Push a method name to the call stack
