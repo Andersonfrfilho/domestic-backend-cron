@@ -47,12 +47,31 @@ jobs:
             type=sha
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          dockerfile: Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
+        run: |
+          # Build the Docker image
+          echo "Building Docker image..."
+          docker build \
+            -f Dockerfile \
+            --build-arg GIT_COMMIT_HASH=${{ github.sha }} \
+            --build-arg GIT_COMMIT_HASH_FULL=${{ github.sha }} \
+            --build-arg GIT_BRANCH=${{ github.ref_name }} \
+            --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') \
+            -t temp-image:latest \
+            .
+
+          # Tag the image with all the tags from metadata
+          echo "Tagging image..."
+          for tag in ${{ steps.meta.outputs.tags }}; do
+            docker tag temp-image:latest "$tag"
+            echo "Tagged as: $tag"
+          done
+
+          # Push all tags
+          echo "Pushing image..."
+          for tag in ${{ steps.meta.outputs.tags }}; do
+            docker push "$tag"
+            echo "Pushed: $tag"
+          done
           labels: ${{ steps.meta.outputs.labels }}
           no-cache: true
           cache-to: type=registry,ref=ghcr.io/${{ env.REPO_LC }}:buildcache,mode=max
