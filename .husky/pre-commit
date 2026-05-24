@@ -1,7 +1,17 @@
 #!/bin/sh
 set -e
 
+echo "Running pre-commit checks..."
+
 # Run lint-staged on changed files (ESLint + Prettier)
+echo "→ Linting and formatting staged files..."
 npx lint-staged
+
+# Run TypeScript type check to catch compilation errors early
+echo "→ Checking TypeScript compilation..."
+npm run build > /dev/null 2>&1 || {
+  echo "✗ TypeScript compilation failed. Run 'npm run build' to see errors."
+  exit 1
+}
 
 echo "✓ Pre-commit checks passed"
