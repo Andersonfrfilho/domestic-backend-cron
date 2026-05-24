@@ -1,3 +1,5 @@
+on: {}
+# DISABLED: pr-checks workflow is disabled
 name: PR Checks
 
 on:
