@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { TraceMethod } from '@app/shared/decorators/trace-method.decorator';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -16,6 +17,7 @@ const BATCH_SIZE = 100;
 
 @Injectable()
 export class RatingRecalculatorService {
+  @TraceMethod()
   private readonly logger = new Logger(RatingRecalculatorService.name);
 
   constructor(

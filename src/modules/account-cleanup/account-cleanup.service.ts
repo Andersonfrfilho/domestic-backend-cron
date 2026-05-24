@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { TraceMethod } from '@app/shared/decorators/trace-method.decorator';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 
@@ -16,6 +17,7 @@ const BATCH_SIZE = 50;
 
 @Injectable()
 export class AccountCleanupService {
+  @TraceMethod()
   private readonly logger = new Logger(AccountCleanupService.name);
 
   constructor(

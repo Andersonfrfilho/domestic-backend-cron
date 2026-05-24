@@ -1,4 +1,5 @@
 import { Category } from '@app/modules/shared/providers/database/entities/category.entity';
+import { TraceMethod } from '@app/shared/decorators/trace-method.decorator';
 import { Inject, Injectable } from '@nestjs/common';
 
 import {
@@ -44,6 +45,7 @@ export class CategoryService implements CategoryServiceInterface {
     private readonly getByIdUseCase: GetCategoryByIdUseCaseInterface,
   ) {}
 
+  @TraceMethod()
   async create(params: CreateCategoryUseCaseParams): Promise<Category> {
     return this.createUseCase.execute(params);
   }

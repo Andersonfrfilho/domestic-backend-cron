@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { TraceMethod } from '@app/shared/decorators/trace-method.decorator';
 import { Cron } from '@nestjs/schedule';
 
 import { CronLockService } from '@modules/shared/lock/cron-lock.service';
@@ -11,6 +12,7 @@ const JOB_TTL_MS = 15 * 60 * 1000; // 15 min (deleção em cascata pode demorar)
 
 @Injectable()
 export class AccountCleanupJob {
+  @TraceMethod()
   private readonly logger = new Logger(AccountCleanupJob.name);
 
   constructor(

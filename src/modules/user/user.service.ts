@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { TraceMethod } from '@app/shared/decorators/trace-method.decorator';
 
 import { UserAddress } from '@app/modules/shared/providers/database/entities/user-address.entity';
 
@@ -53,6 +54,7 @@ export class UserService implements UserServiceInterface {
     private readonly listUserAddressesUseCase: ListUserAddressesUseCaseInterface,
   ) {}
 
+  @TraceMethod()
   async createUser(params: UserServiceParams): Promise<UserServiceResponse> {
     return this.userCreateUseCase.execute(params);
   }
