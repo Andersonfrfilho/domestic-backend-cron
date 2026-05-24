@@ -24,17 +24,8 @@ RUN npm install
 # Build service
 RUN npm run build
 
-# Compile migrations separately (if they exist)
-RUN if ls src/modules/shared/providers/database/migrations/*.ts 2>/dev/null; then \
-    npx tsc src/modules/shared/providers/database/migrations/*.ts \
-      --outDir dist/modules/shared/providers/database/migrations \
-      --module commonjs \
-      --target es2020 \
-      --esModuleInterop \
-      --skipLibCheck \
-      --strict false; \
-  fi && \
-  npm prune --omit=dev
+# Prune dev dependencies (Cron does not run migrations)
+RUN npm prune --omit=dev
 
 # ===== STAGE 2: Runtime (Production) =====
 FROM node:25-alpine
