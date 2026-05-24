@@ -20,7 +20,9 @@ import { JobsModule } from './modules/jobs/jobs.module';
     LoggerModule.forRoot({
       enableTraceStack: true,
       colorize: true,
+      isProduction: false,
       level: process.env.LOG_LEVEL || 'info',
+      interceptorExcludedPaths: ['/health', '/metrics'],
     }),
     ScheduleModule.forRoot(),
     SharedModule,
