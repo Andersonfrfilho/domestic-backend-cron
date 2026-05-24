@@ -2,11 +2,6 @@ on: {}
 # DISABLED: pr-checks workflow is disabled
 name: PR Checks
 
-on:
-  pull_request:
-    branches: [main, develop]
-    types: [opened, synchronize, reopened]
-
 jobs:
   pr-lint:
     name: Validate PR
