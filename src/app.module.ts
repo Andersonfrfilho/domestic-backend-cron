@@ -19,6 +19,7 @@ import { JobsModule } from './modules/jobs/jobs.module';
     ConfigModule,
     LoggerModule.forRoot({
       enableTraceStack: true,
+      colorize: true,
       level: process.env.LOG_LEVEL || 'info',
     }),
     ScheduleModule.forRoot(),
