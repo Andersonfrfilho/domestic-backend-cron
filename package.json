@@ -43,7 +43,7 @@
     "@adatechnology/auth-keycloak": "^0.1.10",
     "@adatechnology/cache": "^0.0.12",
     "@adatechnology/http-client": "^0.0.15",
-    "@adatechnology/logger": "^0.0.12",
+    "@adatechnology/logger": "^0.0.13",
     "@faker-js/faker": "^10.1.0",
     "@fastify/cookie": "^11.0.2",
     "@fastify/csrf-protection": "^7.1.0",
