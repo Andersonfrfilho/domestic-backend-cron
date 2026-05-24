@@ -1,17 +1,16 @@
-import { Category } from '@app/modules/shared/providers/database/entities/category.entity';
-import { TraceMethod } from '@app/shared/decorators/trace-method.decorator';
+import { type Category } from '@app/modules/shared/providers/database/entities/category.entity';
 import { Inject, Injectable } from '@nestjs/common';
 
 import {
   type CreateCategoryUseCaseInterface,
-  CreateCategoryUseCaseParams,
+  type CreateCategoryUseCaseParams,
 } from './use-cases/create-category/create-category.interface';
 import { type DeleteCategoryUseCaseInterface } from './use-cases/delete-category/delete-category.interface';
 import { type GetCategoryByIdUseCaseInterface } from './use-cases/get-category-by-id/get-category-by-id.interface';
 import { type ListCategoriesUseCaseInterface } from './use-cases/list-categories/list-categories.interface';
 import {
   type UpdateCategoryUseCaseInterface,
-  UpdateCategoryUseCaseParams,
+  type UpdateCategoryUseCaseParams,
 } from './use-cases/update-category/update-category.interface';
 
 import {
@@ -45,7 +44,6 @@ export class CategoryService implements CategoryServiceInterface {
     private readonly getByIdUseCase: GetCategoryByIdUseCaseInterface,
   ) {}
 
-  @TraceMethod()
   async create(params: CreateCategoryUseCaseParams): Promise<Category> {
     return this.createUseCase.execute(params);
   }

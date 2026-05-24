@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { TraceMethod } from '@app/shared/decorators/trace-method.decorator';
 
 import { UserAddress } from '@app/modules/shared/providers/database/entities/user-address.entity';
 
@@ -7,9 +6,9 @@ import { type AddUserAddressUseCaseInterface } from './use-cases/add-user-addres
 import {
   AddUserAddressParams,
   type UserCreateUseCaseInterface,
-  UserServiceInterface,
-  UserServiceParams,
-  UserServiceResponse,
+  type UserServiceInterface,
+  type UserServiceParams,
+  type UserServiceResponse,
 } from './use-cases/create-users/create-user.interface';
 import { type DeleteUserUseCaseInterface } from './use-cases/delete-user/delete-user.interface';
 import { type GetUserByIdUseCaseInterface } from './use-cases/get-user-by-id/get-user-by-id.interface';
@@ -54,7 +53,6 @@ export class UserService implements UserServiceInterface {
     private readonly listUserAddressesUseCase: ListUserAddressesUseCaseInterface,
   ) {}
 
-  @TraceMethod()
   async createUser(params: UserServiceParams): Promise<UserServiceResponse> {
     return this.userCreateUseCase.execute(params);
   }

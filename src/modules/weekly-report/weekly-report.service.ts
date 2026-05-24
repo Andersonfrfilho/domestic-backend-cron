@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { TraceMethod } from '@app/shared/decorators/trace-method.decorator';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
@@ -16,7 +15,6 @@ export interface WeeklyReportResult {
 
 @Injectable()
 export class WeeklyReportService {
-  @TraceMethod()
   private readonly logger = new Logger(WeeklyReportService.name);
 
   constructor(

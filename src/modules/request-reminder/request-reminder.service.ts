@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { TraceMethod } from '@app/shared/decorators/trace-method.decorator';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
@@ -15,7 +14,6 @@ export interface RequestReminderResult {
 
 @Injectable()
 export class RequestReminderService {
-  @TraceMethod()
   private readonly logger = new Logger(RequestReminderService.name);
 
   constructor(
