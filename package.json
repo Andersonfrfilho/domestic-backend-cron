@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "prepare": "husky install",
     "build": "nest build --config tsconfig.build.json",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -31,6 +32,12 @@
     "migration:run": "node scripts/migration.js run",
     "migration:revert": "node scripts/migration.js revert",
     "migration:generate": "node scripts/migration.js generate"
+  },
+  "lint-staged": {
+    "{src,apps,libs,test}/**/*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "@adatechnology/auth-keycloak": "^0.1.10",
@@ -108,7 +115,9 @@
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-prettier": "^5.2.2",
     "globals": "^16.0.0",
+    "husky": "^9.1.7",
     "jest": "^30.2.0",
+    "lint-staged": "^17.0.5",
     "prettier": "^3.4.2",
     "sonarqube-scanner": "^4.3.2",
     "source-map-support": "^0.5.21",

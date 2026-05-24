@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+
+echo "Running pre-push validation checks..."
+
+# Build validation
+echo "Validating build..."
+npm run build
+
+# npm audit (non-blocking warning)
+echo "Checking for npm vulnerabilities..."
+npm audit --audit-level=moderate || echo "⚠ Moderate vulnerabilities detected, but push allowed"
+
+echo "✓ Pre-push checks passed"
