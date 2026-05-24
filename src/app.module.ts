@@ -21,6 +21,8 @@ import { JobsModule } from './modules/jobs/jobs.module';
       enableTraceStack: true,
       colorize: true,
       isProduction: false,
+      appName: 'backend-cron',
+      appVersion: '0.0.1',
       level: process.env.LOG_LEVEL || 'info',
       interceptorExcludedPaths: ['/health', '/metrics'],
     }),
