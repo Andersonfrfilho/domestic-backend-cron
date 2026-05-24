@@ -144,6 +144,6 @@ jobs:
           if git diff --cached --exit-code > /dev/null; then
             echo "No changes to commit"
           else
-            git commit -m "chore: update cron image to ${{ github.sha }}"
+            git commit -m "chore: update cron image to $IMAGE_TAG"
             git push https://x-access-token:${{ secrets.KUBERNETS_PAT }}@github.com/Andersonfrfilho/domestic-kubernets.git
           fi
