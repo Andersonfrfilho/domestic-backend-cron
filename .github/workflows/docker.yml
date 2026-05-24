@@ -72,9 +72,6 @@ jobs:
             docker push "$tag"
             echo "Pushed: $tag"
           done
-          labels: ${{ steps.meta.outputs.labels }}
-          no-cache: true
-          cache-to: type=registry,ref=ghcr.io/${{ env.REPO_LC }}:buildcache,mode=max
 
       # ========== ENTERPRISE SECURITY & COMPLIANCE (DISABLED) ==========
       # Uncomment to enable these enterprise-grade security measures
