@@ -21,7 +21,7 @@ import { WeeklyReportModule } from './modules/weekly-report/weekly-report.module
       enableTraceStack: true,
       requestIdFormat: REQUEST_ID_FORMAT.SHORT_HASH,
       colorize: process.stdout.isTTY,
-      isProduction: !process.stdout.isTTY,
+      isProduction: false,
       appName: 'backend-cron',
       appVersion: '0.0.1',
       level: process.env.LOG_LEVEL || 'info',
