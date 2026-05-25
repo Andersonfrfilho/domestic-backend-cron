@@ -43,7 +43,7 @@
     "@adatechnology/nestjs-auth-keycloak": "latest",
     "@adatechnology/nestjs-cache": "latest",
     "@adatechnology/nestjs-http-client": "latest",
-    "@adatechnology/nestjs-logger": "latest",
+    "@adatechnology/nestjs-logger": "0.1.1",
     "@faker-js/faker": "^10.1.0",
     "@fastify/cookie": "^11.0.2",
     "@fastify/csrf-protection": "^7.1.0",
