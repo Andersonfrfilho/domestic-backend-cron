@@ -1,4 +1,4 @@
-import { LOGGER_PROVIDER } from '@adatechnology/nestjs-logger';
+import { LOGGER_PROVIDER, getContext } from '@adatechnology/nestjs-logger';
 import {
   ArgumentsHost,
   Catch,
@@ -56,17 +56,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
       return requestIdFromRequest;
     }
 
-    // 2. Try to get from requestContext (fallback) - loaded at runtime from logger lib if available
+    // 2. Try to get from requestContext (fallback)
     try {
-      // require at runtime to avoid compile-time errors if the logger lib doesn't export requestContext
-
-      const loggerLib: any = require('@adatechnology/logger');
-      const contextStore = loggerLib?.requestContext?.getStore?.();
-      if (contextStore?.requestId) {
-        return contextStore.requestId;
+      const contextStore = getContext?.() as any;
+      if (contextStore?.requestId && typeof contextStore.requestId === 'string') {
+        return contextStore.requestId as string;
       }
     } catch {
-      // ignore if require fails
+      // ignore if context not available
     }
 
     // 3. Try to get from x-request-id header (last resort)
