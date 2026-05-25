@@ -1,9 +1,12 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { LOGGER_PROVIDER } from '@adatechnology/logger';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 
-import { User } from '@modules/shared/providers/database/entities/user.entity';
+import { TraceMethod } from '@app/shared/decorators/trace-method.decorator';
+import type { LogProviderInterface } from '@modules/shared/interfaces/log.interface';
 import { CONNECTIONS_NAMES } from '@modules/shared/providers/database/database.constant';
+import { User } from '@modules/shared/providers/database/entities/user.entity';
 
 export interface AccountCleanupResult {
   accounts_deleted: number;
@@ -16,15 +19,17 @@ const BATCH_SIZE = 50;
 
 @Injectable()
 export class AccountCleanupService {
-  private readonly logger = new Logger(AccountCleanupService.name);
+  private readonly logContext = `${this.constructor.name}.run`;
 
   constructor(
     @InjectRepository(User, CONNECTIONS_NAMES.POSTGRES)
     private readonly userRepo: Repository<User>,
     @InjectDataSource(CONNECTIONS_NAMES.POSTGRES)
     private readonly dataSource: DataSource,
+    @Inject(LOGGER_PROVIDER) private readonly logger: LogProviderInterface,
   ) {}
 
+  @TraceMethod()
   async run(): Promise<AccountCleanupResult> {
     const start = Date.now();
     let accounts_deleted = 0;
@@ -39,7 +44,10 @@ export class AccountCleanupService {
         AND created_at < NOW() - INTERVAL '${expiryDays} days'
     `);
 
-    this.logger.log(`Found ${expiredUsers.length} expired PENDING accounts`);
+    this.logger.info({
+      message: `Found ${expiredUsers.length} expired PENDING accounts`,
+      context: this.logContext,
+    });
 
     for (let i = 0; i < expiredUsers.length; i += BATCH_SIZE) {
       const batch = expiredUsers.slice(i, i + BATCH_SIZE);
@@ -57,7 +65,10 @@ export class AccountCleanupService {
           );
 
           if (Number(active.count) > 0) {
-            this.logger.warn(`Skipping user ${id} — has active service_requests`);
+            this.logger.warn({
+              message: `Skipping user ${id} — has active service_requests`,
+              context: this.logContext,
+            });
             accounts_skipped++;
             continue;
           }
@@ -72,7 +83,11 @@ export class AccountCleanupService {
         await queryRunner.commitTransaction();
       } catch (err) {
         await queryRunner.rollbackTransaction();
-        this.logger.error(`Batch rollback — batch start index ${i}`, err);
+        this.logger.error({
+          message: `Batch rollback — batch start index ${i}`,
+          context: this.logContext,
+          params: { error: (err as Error)?.message },
+        });
         errors++;
       } finally {
         await queryRunner.release();

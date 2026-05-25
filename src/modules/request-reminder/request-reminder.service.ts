@@ -1,10 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { LOGGER_PROVIDER } from '@adatechnology/logger';
+import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 
-import { ServiceRequest } from '@modules/shared/providers/database/entities/service-request.entity';
+import { TraceMethod } from '@app/shared/decorators/trace-method.decorator';
+import type { LogProviderInterface } from '@modules/shared/interfaces/log.interface';
 import { CONNECTIONS_NAMES } from '@modules/shared/providers/database/database.constant';
+import { ServiceRequest } from '@modules/shared/providers/database/entities/service-request.entity';
 
 export interface RequestReminderResult {
   reminders_sent: number;
@@ -14,14 +17,16 @@ export interface RequestReminderResult {
 
 @Injectable()
 export class RequestReminderService {
-  private readonly logger = new Logger(RequestReminderService.name);
+  private readonly logContext = `${this.constructor.name}.run`;
 
   constructor(
     @InjectRepository(ServiceRequest, CONNECTIONS_NAMES.POSTGRES)
     private readonly serviceRequestRepo: Repository<ServiceRequest>,
     private readonly amqp: AmqpConnection,
+    @Inject(LOGGER_PROVIDER) private readonly logger: LogProviderInterface,
   ) {}
 
+  @TraceMethod()
   async run(): Promise<RequestReminderResult> {
     const start = Date.now();
     let reminders_sent = 0;
@@ -51,7 +56,10 @@ export class RequestReminderService {
         )
     `);
 
-    this.logger.log(`Found ${pendingRequests.length} service requests needing reminders`);
+    this.logger.info({
+      message: `Found ${pendingRequests.length} service requests needing reminders`,
+      context: this.logContext,
+    });
 
     for (const request of pendingRequests) {
       try {
@@ -64,7 +72,11 @@ export class RequestReminderService {
         });
         reminders_sent++;
       } catch (err) {
-        this.logger.error(`Failed to publish reminder for request ${request.id}`, err);
+        this.logger.error({
+          message: `Failed to publish reminder for request ${request.id}`,
+          context: this.logContext,
+          params: { error: (err as Error)?.message },
+        });
         errors++;
       }
     }

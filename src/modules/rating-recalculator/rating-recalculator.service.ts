@@ -1,7 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { LOGGER_PROVIDER } from '@adatechnology/logger';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { TraceMethod } from '@app/shared/decorators/trace-method.decorator';
+import type { LogProviderInterface } from '@modules/shared/interfaces/log.interface';
 import { CONNECTIONS_NAMES } from '@modules/shared/providers/database/database.constant';
 import { ProviderProfile } from '@modules/shared/providers/database/entities/provider-profile.entity';
 import { Review } from '@modules/shared/providers/database/entities/review.entity';
@@ -17,15 +20,17 @@ const BATCH_SIZE = 100;
 
 @Injectable()
 export class RatingRecalculatorService {
-  private readonly logger = new Logger(RatingRecalculatorService.name);
+  private readonly logContext = `${this.constructor.name}.run`;
 
   constructor(
     @InjectRepository(ProviderProfile, CONNECTIONS_NAMES.POSTGRES)
     private readonly providerRepo: Repository<ProviderProfile>,
     @InjectRepository(Review, CONNECTIONS_NAMES.POSTGRES)
     private readonly reviewRepo: Repository<Review>,
+    @Inject(LOGGER_PROVIDER) private readonly logger: LogProviderInterface,
   ) {}
 
+  @TraceMethod()
   async run(): Promise<RatingRecalculatorResult> {
     const start = Date.now();
     let providers_updated = 0;
@@ -47,7 +52,10 @@ export class RatingRecalculatorService {
         .groupBy('r.provider_id')
         .getRawMany();
 
-    this.logger.log(`Found ${rows.length} providers to recalculate`);
+    this.logger.info({
+      message: `Found ${rows.length} providers to recalculate`,
+      context: this.logContext,
+    });
 
     // Processa em batches
     for (let i = 0; i < rows.length; i += BATCH_SIZE) {
@@ -60,7 +68,10 @@ export class RatingRecalculatorService {
             const provider = await this.providerRepo.findOne({ where: { id: row.provider_id } });
 
             if (!provider) {
-              this.logger.warn(`Provider not found: ${row.provider_id}`);
+              this.logger.warn({
+                message: `Provider not found: ${row.provider_id}`,
+                context: this.logContext,
+              });
               return;
             }
 
@@ -72,7 +83,11 @@ export class RatingRecalculatorService {
             await this.providerRepo.update(row.provider_id, { averageRating: newRating });
             providers_updated++;
           } catch (err) {
-            this.logger.error(`Error updating provider ${row.provider_id}`, err);
+            this.logger.error({
+              message: `Error updating provider ${row.provider_id}`,
+              context: this.logContext,
+              params: { error: (err as Error)?.message },
+            });
             errors++;
           }
         }),

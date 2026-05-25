@@ -1,8 +1,11 @@
+import { LOGGER_PROVIDER } from '@adatechnology/logger';
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { TraceMethod } from '@app/shared/decorators/trace-method.decorator';
+import type { LogProviderInterface } from '@modules/shared/interfaces/log.interface';
 import { CONNECTIONS_NAMES } from '@modules/shared/providers/database/database.constant';
 import { ProviderProfile } from '@modules/shared/providers/database/entities/provider-profile.entity';
 
@@ -15,14 +18,16 @@ export interface WeeklyReportResult {
 
 @Injectable()
 export class WeeklyReportService {
-  private readonly logger = new Logger(WeeklyReportService.name);
+  private readonly logContext = `${this.constructor.name}.run`;
 
   constructor(
     @InjectRepository(ProviderProfile, CONNECTIONS_NAMES.POSTGRES)
     private readonly providerRepo: Repository<ProviderProfile>,
     private readonly amqp: AmqpConnection,
+    @Inject(LOGGER_PROVIDER) private readonly logger: LogProviderInterface,
   ) {}
 
+  @TraceMethod()
   async run(): Promise<WeeklyReportResult> {
     const start = Date.now();
     let reports_sent = 0;
@@ -56,7 +61,10 @@ export class WeeklyReportService {
       HAVING COUNT(sr.id) > 0
     `);
 
-    this.logger.log(`Generating weekly reports for ${providers.length} active providers`);
+    this.logger.info({
+      message: `Generating weekly reports for ${providers.length} active providers`,
+      context: this.logContext,
+    });
 
     for (const provider of providers) {
       providers_processed++;
@@ -75,10 +83,11 @@ export class WeeklyReportService {
         });
         reports_sent++;
       } catch (err) {
-        this.logger.error(
-          `Failed to publish weekly report for provider ${provider.provider_id}`,
-          err,
-        );
+        this.logger.error({
+          message: `Failed to publish weekly report for provider ${provider.provider_id}`,
+          context: this.logContext,
+          params: { error: (err as Error)?.message },
+        });
         errors++;
       }
     }
