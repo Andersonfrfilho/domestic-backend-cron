@@ -1,17 +1,17 @@
-import { LoggerModule } from '@adatechnology/nestjs-logger';
+import { LoggerModule, REQUEST_ID_FORMAT } from '@adatechnology/nestjs-logger';
 import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 
 import { ConfigModule } from '@config/config.module';
 import { HealthModule } from '@modules/health/health.module';
 
-import { MetricsModule } from './modules/metrics/metrics.module';
-import { SharedModule } from './modules/shared/shared.module';
 import { AccountCleanupModule } from './modules/account-cleanup/account-cleanup.module';
+import { JobsModule } from './modules/jobs/jobs.module';
+import { MetricsModule } from './modules/metrics/metrics.module';
 import { RatingRecalculatorModule } from './modules/rating-recalculator/rating-recalculator.module';
 import { RequestReminderModule } from './modules/request-reminder/request-reminder.module';
+import { SharedModule } from './modules/shared/shared.module';
 import { WeeklyReportModule } from './modules/weekly-report/weekly-report.module';
-import { JobsModule } from './modules/jobs/jobs.module';
 
 @Module({
   imports: [
@@ -19,6 +19,7 @@ import { JobsModule } from './modules/jobs/jobs.module';
     ConfigModule,
     LoggerModule.forRoot({
       enableTraceStack: true,
+      requestIdFormat: REQUEST_ID_FORMAT.SHORT_HASH,
       colorize: true,
       isProduction: false,
       appName: 'backend-cron',
