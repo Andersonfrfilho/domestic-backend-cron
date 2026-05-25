@@ -1,6 +1,6 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { runWithContext, getContext } from '@adatechnology/logger';
+import { runWithContext, getContext } from '@adatechnology/nestjs-logger';
 
 @Injectable()
 export class RequestIdContextInterceptor implements NestInterceptor {

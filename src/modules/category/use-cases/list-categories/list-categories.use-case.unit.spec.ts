@@ -1,4 +1,4 @@
-import { CACHE_PROVIDER } from '@adatechnology/cache';
+import { CACHE_PROVIDER } from '@adatechnology/nestjs-cache';
 import { Test } from '@nestjs/testing';
 
 import { CATEGORY_REPOSITORY_PROVIDE } from '../../category.token';

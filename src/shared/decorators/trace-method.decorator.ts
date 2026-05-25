@@ -1,4 +1,4 @@
-import { pushToTraceStack, popFromTraceStack } from '@adatechnology/logger';
+import { pushToTraceStack, popFromTraceStack } from '@adatechnology/nestjs-logger';
 
 export function TraceMethod() {
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {

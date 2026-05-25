@@ -1,4 +1,4 @@
-import { LOGGER_PROVIDER, runWithContext } from '@adatechnology/logger';
+import { LOGGER_PROVIDER, runWithContext } from '@adatechnology/nestjs-logger';
 import { Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 

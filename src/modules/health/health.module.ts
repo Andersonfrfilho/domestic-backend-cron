@@ -1,4 +1,4 @@
-import { LoggerModule } from '@adatechnology/logger';
+import { LoggerModule } from '@adatechnology/nestjs-logger';
 import { Module } from '@nestjs/common';
 
 import { HealthController } from './health.controller';

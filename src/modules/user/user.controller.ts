@@ -1,5 +1,5 @@
-import type { CacheProviderInterface } from '@adatechnology/cache';
-import { CACHE_PROVIDER } from '@adatechnology/cache';
+import type { CacheProviderInterface } from '@adatechnology/nestjs-cache';
+import { CACHE_PROVIDER } from '@adatechnology/nestjs-cache';
 import {
   Body,
   Controller,
