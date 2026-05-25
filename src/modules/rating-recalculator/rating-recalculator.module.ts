@@ -1,15 +1,19 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ProviderProfile } from '@modules/shared/providers/database/entities/provider-profile.entity';
-import { CONNECTIONS_NAMES } from '@modules/shared/providers/database/database.constant';
 import { MetricsModule } from '@modules/metrics/metrics.module';
+import { CONNECTIONS_NAMES } from '@modules/shared/providers/database/database.constant';
+import { ProviderProfile } from '@modules/shared/providers/database/entities/provider-profile.entity';
+import { Review } from '@modules/shared/providers/database/entities/review.entity';
 
-import { RatingRecalculatorService } from './rating-recalculator.service';
 import { RatingRecalculatorJob } from './rating-recalculator.job';
+import { RatingRecalculatorService } from './rating-recalculator.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ProviderProfile], CONNECTIONS_NAMES.POSTGRES), MetricsModule],
+  imports: [
+    TypeOrmModule.forFeature([ProviderProfile, Review], CONNECTIONS_NAMES.POSTGRES),
+    MetricsModule,
+  ],
   providers: [RatingRecalculatorService, RatingRecalculatorJob],
   exports: [RatingRecalculatorService],
 })

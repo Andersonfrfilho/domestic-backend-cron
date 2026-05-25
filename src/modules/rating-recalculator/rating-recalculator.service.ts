@@ -2,8 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { ProviderProfile } from '@modules/shared/providers/database/entities/provider-profile.entity';
 import { CONNECTIONS_NAMES } from '@modules/shared/providers/database/database.constant';
+import { ProviderProfile } from '@modules/shared/providers/database/entities/provider-profile.entity';
+import { Review } from '@modules/shared/providers/database/entities/review.entity';
 
 export interface RatingRecalculatorResult {
   providers_updated: number;
@@ -21,6 +22,8 @@ export class RatingRecalculatorService {
   constructor(
     @InjectRepository(ProviderProfile, CONNECTIONS_NAMES.POSTGRES)
     private readonly providerRepo: Repository<ProviderProfile>,
+    @InjectRepository(Review, CONNECTIONS_NAMES.POSTGRES)
+    private readonly reviewRepo: Repository<Review>,
   ) {}
 
   async run(): Promise<RatingRecalculatorResult> {
@@ -31,17 +34,16 @@ export class RatingRecalculatorService {
 
     const windowDays = Number(process.env.RATING_RECALC_WINDOW_DAYS ?? 30);
 
-    // Busca prestadores com reviews recentes
+    // Busca médias de rating por prestador via Review repository
     const rows: Array<{ provider_id: string; average_rating: string; review_count: string }> =
-      await this.providerRepo.query(`
-        SELECT
-          provider_id,
-          AVG(rating)::DECIMAL(3,2) AS average_rating,
-          COUNT(*)::INT              AS review_count
-        FROM reviews
-        WHERE created_at >= NOW() - INTERVAL '${windowDays} days'
-        GROUP BY provider_id
-      `);
+      await this.reviewRepo
+        .createQueryBuilder('r')
+        .select('r.provider_id', 'provider_id')
+        .addSelect('AVG(r.rating)::DECIMAL(3,2)', 'average_rating')
+        .addSelect('COUNT(*)::INT', 'review_count')
+        .where('r.created_at >= NOW() - INTERVAL :window', { window: `${windowDays} days` })
+        .groupBy('r.provider_id')
+        .getRawMany();
 
     this.logger.log(`Found ${rows.length} providers to recalculate`);
 

@@ -1,10 +1,10 @@
+import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 
-import { ProviderProfile } from '@modules/shared/providers/database/entities/provider-profile.entity';
 import { CONNECTIONS_NAMES } from '@modules/shared/providers/database/database.constant';
+import { ProviderProfile } from '@modules/shared/providers/database/entities/provider-profile.entity';
 
 export interface WeeklyReportResult {
   reports_sent: number;
@@ -51,7 +51,7 @@ export class WeeklyReportService {
       LEFT JOIN reviews r
         ON r.provider_id = pp.id
         AND r.created_at >= NOW() - INTERVAL '7 days'
-      WHERE pp.is_active = true
+      WHERE pp.is_available = true
       GROUP BY pp.id, pp.user_id
       HAVING COUNT(sr.id) > 0
     `);
@@ -75,7 +75,10 @@ export class WeeklyReportService {
         });
         reports_sent++;
       } catch (err) {
-        this.logger.error(`Failed to publish weekly report for provider ${provider.provider_id}`, err);
+        this.logger.error(
+          `Failed to publish weekly report for provider ${provider.provider_id}`,
+          err,
+        );
         errors++;
       }
     }
