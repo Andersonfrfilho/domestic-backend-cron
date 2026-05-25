@@ -20,7 +20,7 @@ import { WeeklyReportModule } from './modules/weekly-report/weekly-report.module
     LoggerModule.forRoot({
       enableTraceStack: true,
       requestIdFormat: REQUEST_ID_FORMAT.SHORT_HASH,
-      colorize: process.stdout.isTTY,
+      colorize: process.stdout.isTTY ?? false,
       isProduction: false,
       appName: 'backend-cron',
       appVersion: '0.0.1',
