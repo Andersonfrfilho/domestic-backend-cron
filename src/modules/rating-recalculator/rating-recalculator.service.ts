@@ -41,7 +41,9 @@ export class RatingRecalculatorService {
         .select('r.provider_id', 'provider_id')
         .addSelect('AVG(r.rating)::DECIMAL(3,2)', 'average_rating')
         .addSelect('COUNT(*)::INT', 'review_count')
-        .where('r.created_at >= NOW() - INTERVAL :window', { window: `${windowDays} days` })
+        .where('r.created_at >= NOW() - CAST(:window AS INTERVAL)', {
+          window: `${windowDays} days`,
+        })
         .groupBy('r.provider_id')
         .getRawMany();
 
