@@ -133,7 +133,7 @@ jobs:
           git config user.name "GitHub Actions"
 
           BUILD_TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
-          IMAGE_TAG="sha-$(echo "${{ github.sha }}" | cut -c1-7)"
+          IMAGE_TAG="main"
 
           sed -i "s/build.timestamp:.*/build.timestamp: \"$BUILD_TIMESTAMP\"/" cron/cron.deployment.yaml
           sed -i "s/build.commit:.*/build.commit: \"${{ github.sha }}\"/" cron/cron.deployment.yaml
