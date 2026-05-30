@@ -15,11 +15,11 @@ importers:
         specifier: latest
         version: 0.0.21(@nestjs/common@11.1.23(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.23)
       '@adatechnology/nestjs-http-client':
-        specifier: latest
-        version: 0.0.25(@nestjs/common@11.1.23(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.23)
+        specifier: 0.0.31
+        version: 0.0.31(@nestjs/common@11.1.23(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.23)
       '@adatechnology/nestjs-logger':
-        specifier: 0.2.0
-        version: 0.2.0(@nestjs/common@11.1.23(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.23)
+        specifier: 0.2.4
+        version: 0.2.4(@nestjs/common@11.1.23(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.23)
       '@faker-js/faker':
         specifier: ^10.1.0
         version: 10.4.0
@@ -279,8 +279,20 @@ packages:
       '@nestjs/common': ^11.0.16
       '@nestjs/core': ^11
 
+  '@adatechnology/nestjs-cache@0.0.25':
+    resolution: {integrity: sha512-cgm0YN7axQENucLDtcpRT+gL9dxtmpP5OelVuSgFqt8DZTFto4ncfeKFkKGkR5kgCIBqZVoD+8mdoeOlRSTlvA==}
+    peerDependencies:
+      '@nestjs/common': ^11.0.16
+      '@nestjs/core': ^11
+
   '@adatechnology/nestjs-http-client@0.0.25':
     resolution: {integrity: sha512-F04NhPvU5hzK0bdxx2pxJ/nHaIrSvVLn7gLzRnSpvxDSwdJtw/6VSdyh8jTagy+1EEkc2DaJLUtT9XXgKoBgew==}
+    peerDependencies:
+      '@nestjs/common': ^11.0.16
+      '@nestjs/core': ^11
+
+  '@adatechnology/nestjs-http-client@0.0.31':
+    resolution: {integrity: sha512-EQEu/kVLFMaCHI5RrMejNn8juTZZM5AivkcYT+BJqcJI/a+5z6/KRcsOZKLvj8sSaxBnEy7EUGWDO5eneTzXcw==}
     peerDependencies:
       '@nestjs/common': ^11.0.16
       '@nestjs/core': ^11
@@ -291,8 +303,8 @@ packages:
       '@nestjs/common': ^11.0.16
       '@nestjs/core': ^11
 
-  '@adatechnology/nestjs-logger@0.2.0':
-    resolution: {integrity: sha512-pS1hRtDzudAExwvRHiW7svADZjoLr/Kx0obHnWasYJ1goeoFJYT0TLs9E8Dq98Y3/YsQ+9X+R362QrOXyk1Xzw==}
+  '@adatechnology/nestjs-logger@0.2.4':
+    resolution: {integrity: sha512-59x7g+1NnfxWw2lGQYRcHYcrM+UaqFjRPJEalmoPJ3ouRt/qKljKzzk+Wk64/7PIdhJHEP/xNH8M0c7VOXAsPA==}
     peerDependencies:
       '@nestjs/common': ^11.0.16
       '@nestjs/core': ^11
@@ -6694,10 +6706,31 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@adatechnology/nestjs-cache@0.0.25(@nestjs/common@11.1.23(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.23)':
+    dependencies:
+      '@adatechnology/nestjs-logger': 0.2.4(@nestjs/common@11.1.23(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.23)
+      '@nestjs/common': 11.1.23(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/core': 11.1.23(@nestjs/common@11.1.23(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.23)(@nestjs/websockets@11.1.23)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      ioredis: 5.10.1
+    transitivePeerDependencies:
+      - supports-color
+
   '@adatechnology/nestjs-http-client@0.0.25(@nestjs/common@11.1.23(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.23)':
     dependencies:
       '@adatechnology/nestjs-cache': 0.0.21(@nestjs/common@11.1.23(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.23)
       '@adatechnology/nestjs-logger': 0.1.0(@nestjs/common@11.1.23(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.23)
+      '@nestjs/common': 11.1.23(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/core': 11.1.23(@nestjs/common@11.1.23(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.23)(@nestjs/websockets@11.1.23)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      axios: 1.16.1
+      rxjs: 7.8.2
+    transitivePeerDependencies:
+      - debug
+      - supports-color
+
+  '@adatechnology/nestjs-http-client@0.0.31(@nestjs/common@11.1.23(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.23)':
+    dependencies:
+      '@adatechnology/nestjs-cache': 0.0.25(@nestjs/common@11.1.23(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.23)
+      '@adatechnology/nestjs-logger': 0.2.4(@nestjs/common@11.1.23(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.23)
       '@nestjs/common': 11.1.23(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/core': 11.1.23(@nestjs/common@11.1.23(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.23)(@nestjs/websockets@11.1.23)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       axios: 1.16.1
@@ -6714,7 +6747,7 @@ snapshots:
       winston: 3.19.0
       winston-daily-rotate-file: 5.0.0(winston@3.19.0)
 
-  '@adatechnology/nestjs-logger@0.2.0(@nestjs/common@11.1.23(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.23)':
+  '@adatechnology/nestjs-logger@0.2.4(@nestjs/common@11.1.23(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.23)':
     dependencies:
       '@nestjs/common': 11.1.23(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/core': 11.1.23(@nestjs/common@11.1.23(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.23)(@nestjs/websockets@11.1.23)(reflect-metadata@0.2.2)(rxjs@7.8.2)
